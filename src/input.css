@@ -1,1 +1,40 @@
+/* src/input.css */
+
+/* In v4, @import replaces the old @tailwind directives */
 @import "tailwindcss";
+
+/* ─── Theme ─────────────────────────────────────────────
+   In v4 all config lives here in CSS — no tailwind.config.js needed
+─────────────────────────────────────────────────────── */
+@theme {
+  /* Fonts */
+  --font-newsreader: 'Newsreader', Georgia, serif;
+  --font-manrope:    'Manrope', sans-serif;
+
+  /* Navy palette */
+  --color-navy-deep: #031632;
+  --color-navy-mid:  #1A2B48;
+
+  /* Gold palette */
+  --color-gold-dark:  #775A19;
+  --color-gold-mid:   #A16207;
+  --color-gold-light: #FED488;
+
+  /* Slate accent */
+  --color-slate-muted: #8293B5;
+}
+
+/* ─── Custom utilities ──────────────────────────────────
+   Replaces the old @layer utilities block
+─────────────────────────────────────────────────────── */
+@utility border-b-gold {
+  border-bottom: 2px solid #775A19;
+}
+
+@utility border-t-gold {
+  border-top: 2px solid #775A19;
+}
+
+@utility border-gold-faint {
+  border: 2px solid rgba(119, 90, 25, 0.2);
+}

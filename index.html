@@ -2,11 +2,314 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Editorial Scholar</title>
-  <link href="src/output.css" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="src/output.css">
+  <title>The Editorial Scholar — Programs</title>
+
+  <!-- Tailwind CDN -->
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Remix Icons (replaces all SVGs) -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+
 </head>
-<body>
-  <h1 class="text-3xl font-bold text-blue-500">Hello Tailwind!</h1>
+<body class="bg-[#F8F9FA] font-manrope">
+
+  <!-- ════════════════════════════════
+       NAV
+  ════════════════════════════════ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F1F5F9]">
+    <div class="max-w-[1280px] mx-auto px-8 h-[68px] flex items-center justify-between gap-4">
+
+      <span class="font-newsreader font-bold text-2xl text-[#0F172A] whitespace-nowrap">
+        The Editorial Scholar
+      </span>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#A16207] border-b-2 border-[#A16207] pb-1">Programs</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Admissions</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Resources</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Community</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">About</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="w-[34px] h-[34px] rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors">
+          <i class="ri-search-line text-lg text-[#44474D]"></i>
+        </button>
+        <button class="bg-[#031632] text-white font-manrope font-medium text-sm px-6 py-2 rounded-md hover:bg-[#1A2B48] transition-colors">
+          Log in
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════
+       HERO
+  ════════════════════════════════ -->
+  <section class="relative w-full min-h-[870px] bg-[#1A2B48] flex items-center justify-center overflow-hidden mt-[68px]">
+
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600')] bg-cover bg-center opacity-40"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(90deg,#031632 0%,rgba(3,22,50,.8) 50%,rgba(3,22,50,0) 100%)"></div>
+
+    <div class="relative z-10 max-w-[1280px] w-full mx-auto px-8 py-24">
+      <div class="flex flex-col gap-8 max-w-[795px]">
+
+        <p class="font-manrope font-bold text-sm tracking-[2.8px] uppercase text-[#775A19]">
+          Curated Academic Pathways
+        </p>
+
+        <h1 class="font-newsreader font-bold text-[96px] leading-[96px] tracking-[-2.4px] text-white">
+          Curating your intellectual future.
+        </h1>
+
+        <p class="font-manrope font-normal text-2xl leading-8 text-[#8293B5] max-w-[672px]">
+          Expert guidance for students navigating the world's most prestigious academic institutions — from application to arrival.
+        </p>
+
+        <div class="flex items-center gap-6 pt-2">
+          <button class="bg-[#FED488] text-[#785A1A] font-manrope font-bold text-lg px-10 py-4 rounded-md hover:bg-yellow-300 transition-colors whitespace-nowrap">
+            Explore Programs
+          </button>
+          <button class="flex items-center gap-2 text-white font-manrope font-medium text-lg py-4 hover:opacity-80 transition-opacity">
+            Watch Overview
+            <i class="ri-play-fill text-base"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       PROGRAMS
+  ════════════════════════════════ -->
+  <section class="w-full bg-[#F8F9FA] py-24">
+    <div class="max-w-[1280px] mx-auto px-8 flex flex-col gap-20">
+
+      <!-- Header -->
+      <div class="flex flex-row justify-between items-end">
+        <div class="flex flex-col gap-6 max-w-[631px]">
+          <h2 class="font-newsreader font-bold text-5xl leading-[48px] text-[#191C1D]">Our Programs</h2>
+          <p class="font-manrope font-normal text-lg leading-[29px] text-[#44474D]">
+            A complete suite of services built around your ambitions — from early planning to post-acceptance preparation.
+          </p>
+        </div>
+        <div class="pb-4">
+          <div class="w-24 h-0.5 bg-[#775A19]"></div>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="relative w-full" style="min-height:916px;">
+
+        <!-- Card 1 — Test Prep (light, left) -->
+        <div class="absolute left-0 top-0 bg-[#F3F4F5] flex flex-col justify-between p-12 overflow-hidden" style="right:410.67px;height:500px;">
+          <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513258496099-48168024aec0?w=800')] bg-cover bg-center opacity-20"></div>
+
+          <div class="relative z-10 flex flex-col gap-4 max-w-[448px]">
+            <p class="font-manrope font-bold text-xs tracking-[1.2px] uppercase text-[#775A19]">Precision Testing</p>
+            <h3 class="font-newsreader font-bold text-[30px] leading-9 text-[#191C1D]">Test Prep Mastery</h3>
+            <p class="font-manrope font-normal text-base leading-[26px] text-[#44474D]">
+              Master the IELTS, GRE, and TOEFL with our curated study plans and diagnostic assessments designed by former examiners.
+            </p>
+            <div class="flex gap-3 pt-4">
+              <span class="bg-[#D7E2FF] text-[#374765] font-manrope font-bold text-xs tracking-[-0.6px] uppercase px-3 py-1 rounded-sm">IELTS</span>
+              <span class="bg-[#D7E2FF] text-[#374765] font-manrope font-bold text-xs tracking-[-0.6px] uppercase px-3 py-1 rounded-sm">GRE</span>
+              <span class="bg-[#D7E2FF] text-[#374765] font-manrope font-bold text-xs tracking-[-0.6px] uppercase px-3 py-1 rounded-sm">TOEFL</span>
+            </div>
+          </div>
+
+          <button class="relative z-10 inline-flex items-center gap-2 border-b-gold pb-1 w-fit hover:opacity-70 transition-opacity">
+            <span class="font-manrope font-bold text-base text-[#031632]">Explore Test Prep</span>
+            <i class="ri-arrow-right-s-line text-base text-[#031632]"></i>
+          </button>
+        </div>
+
+        <!-- Card 2 — University Matcher (dark, right) -->
+        <div class="absolute top-0 right-0 bg-[#031632] border-t-gold flex flex-col justify-between p-12" style="left:821.33px;height:500px;">
+          <div class="flex flex-col gap-4">
+            <p class="font-manrope font-bold text-xs tracking-[1.2px] uppercase text-[#775A19]">Algorithmic Precision</p>
+            <h3 class="font-newsreader font-bold text-[30px] leading-9 text-white">University Matcher</h3>
+            <p class="font-manrope font-normal text-base leading-[26px] text-[#8293B5]">
+              Our proprietary matching system cross-references your profile against 2,500+ global institutions to find your perfect fit.
+            </p>
+          </div>
+          <button class="bg-[#775A19] text-white font-manrope font-bold text-sm tracking-[0.35px] uppercase py-4 rounded-md text-center hover:bg-[#A16207] transition-colors">
+            Find Your Match
+          </button>
+        </div>
+
+        <!-- Card 3 — Visa Information (white, center-bottom) -->
+        <div class="absolute bg-white flex flex-row" style="left:205.33px;right:205.33px;top:516px;height:400px;">
+          <div class="p-12" style="flex:0 0 50%;">
+            <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?w=600')] bg-cover bg-center rounded-sm opacity-80"></div>
+          </div>
+          <div class="flex flex-col gap-4 justify-center p-12" style="flex:1 1 0;">
+            <p class="font-manrope font-bold text-xs tracking-[1.2px] uppercase text-[#775A19]">Regulatory Guidance</p>
+            <h3 class="font-newsreader font-bold text-[30px] leading-9 text-[#191C1D]">Visa Information</h3>
+            <p class="font-manrope font-normal text-base leading-[26px] text-[#44474D]">
+              Expert navigations through student visa requirements for UK, USA, Canada, and the EU.
+            </p>
+            <button class="inline-flex items-center gap-2 pt-2 w-fit hover:opacity-70 transition-opacity">
+              <span class="font-manrope font-bold text-base text-[#031632]">Read Visa Guides</span>
+              <i class="ri-arrow-right-line text-base text-[#031632]"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       PREPAREDNESS
+  ════════════════════════════════ -->
+  <section class="w-full bg-[#F3F4F5] py-32">
+    <div class="max-w-[1280px] mx-auto px-8 flex flex-row items-center gap-20">
+
+      <!-- Image column -->
+      <div class="relative flex-shrink-0" style="width:568px;height:710px;">
+        <div class="absolute border-gold-faint" style="left:-24px;right:24px;top:-24px;bottom:24px;z-index:0;"></div>
+        <div class="relative w-full h-full bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800')] bg-cover bg-center" style="z-index:1;"></div>
+
+        <!-- Testimonial card -->
+        <div class="absolute bg-white p-8 flex flex-col gap-4 shadow-xl" style="width:318px;right:-40px;bottom:-40px;z-index:2;">
+          <div class="w-[34px] h-6 bg-[#775A19] flex items-center justify-center">
+            <i class="ri-double-quotes-l text-white text-sm"></i>
+          </div>
+          <p class="font-newsreader font-normal text-lg leading-[25px] text-[#191C1D]">
+            "The Editorial Scholar didn't just help me get in — they prepared me to thrive from day one."
+          </p>
+          <p class="font-manrope font-bold text-xs tracking-[1.2px] uppercase text-[#191C1D]">
+            Aisha M. — LSE Class of 2024
+          </p>
+        </div>
+      </div>
+
+      <!-- Text column -->
+      <div class="flex flex-col gap-10" style="width:568px;">
+        <h2 class="font-newsreader font-bold text-5xl leading-[60px] text-[#191C1D]">
+          Beyond placement, we focus on preparedness.
+        </h2>
+
+        <div class="flex flex-col gap-8">
+
+          <!-- Feature 1 -->
+          <div class="flex flex-row gap-6 items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-[#1A2B48] flex items-center justify-center">
+              <i class="ri-flight-takeoff-line text-xl text-[#775A19]"></i>
+            </div>
+            <div class="flex flex-col gap-1">
+              <h4 class="font-manrope font-bold text-lg leading-7 text-[#191C1D]">Pre-Departure Orientation</h4>
+              <p class="font-manrope font-normal text-sm leading-5 text-[#44474D]">Structured programmes covering cultural adaptation, academic expectations, and campus navigation before you leave home.</p>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="flex flex-row gap-6 items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-[#1A2B48] flex items-center justify-center">
+              <i class="ri-user-heart-line text-xl text-[#775A19]"></i>
+            </div>
+            <div class="flex flex-col gap-1">
+              <h4 class="font-manrope font-bold text-lg leading-7 text-[#191C1D]">Mentorship Matching</h4>
+              <p class="font-manrope font-normal text-sm leading-5 text-[#44474D]">We connect you with alumni at your target institution so you can ask real questions from people who have already walked the path.</p>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="flex flex-row gap-6 items-start">
+            <div class="flex-shrink-0 w-12 h-12 bg-[#1A2B48] flex items-center justify-center">
+              <i class="ri-award-line text-xl text-[#775A19]"></i>
+            </div>
+            <div class="flex flex-col gap-1">
+              <h4 class="font-manrope font-bold text-lg leading-7 text-[#191C1D]">Scholarship Access</h4>
+              <p class="font-manrope font-normal text-sm leading-5 text-[#44474D]">Access our curated database of 500+ scholarships with eligibility matching and application timeline support.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       CTA
+  ════════════════════════════════ -->
+  <section class="w-full bg-[#031632] py-24 px-48">
+    <div class="max-w-[896px] mx-auto px-8 flex flex-col items-center gap-8">
+
+      <h2 class="font-newsreader font-bold text-[60px] leading-[60px] text-white text-center">
+        Start your journey today.
+      </h2>
+      <p class="font-manrope font-normal text-xl leading-8 text-[#8293B5] text-center max-w-[764px]">
+        Join thousands of students who have navigated the global admissions landscape with confidence and clarity.
+      </p>
+
+      <div class="flex flex-col items-center gap-6 pt-2">
+        <button class="bg-[#775A19] text-white font-manrope font-bold text-lg px-12 py-5 rounded-md hover:bg-[#A16207] transition-colors shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)]">
+          Begin Your Application
+        </button>
+        <p class="font-manrope font-normal text-xs tracking-[1.2px] uppercase text-[#8293B5]/60">
+          No commitment required
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════
+       FOOTER
+  ════════════════════════════════ -->
+  <footer class="w-full bg-[#F8FAFC] border-t border-[#E2E8F0] py-12">
+    <div class="max-w-[1280px] mx-auto px-8">
+      <div class="grid grid-cols-4 gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-4">
+          <p class="font-newsreader font-bold text-lg text-[#0F172A]">The Editorial Scholar</p>
+          <p class="font-manrope font-normal text-sm leading-5 tracking-[0.35px] text-[#64748B]">
+            &copy; 2024 The Editorial Scholar.<br/>Curating Global Futures.
+          </p>
+        </div>
+
+        <!-- Company -->
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Company</p>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">About Us</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Contact Support</a>
+        </div>
+
+        <!-- Legal -->
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
+        </div>
+
+        <!-- Social -->
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Social</p>
+          <div class="flex items-center gap-4">
+            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors">
+              <i class="ri-twitter-x-line text-xl"></i>
+            </a>
+            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors">
+              <i class="ri-linkedin-line text-xl"></i>
+            </a>
+            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors">
+              <i class="ri-instagram-line text-xl"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>
