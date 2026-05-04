@@ -1,173 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Editorial Scholar</title>
-  <link rel="stylesheet" href="akibulStyle.css">
+    <meta charset="UTF-8">
+    <title>Editorial Scholar</title>
+    <link rel="stylesheet" href="akibulStyle.css">
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<header class="navbar">
-  <div class="logo">The Editorial Scholar</div>
-  <nav>
-    <a href="#">Programs</a>
-    <a href="#">Scholarships</a>
-    <a href="#">Test Prep</a>
-    <a href="#">Visa Guide</a>
-    <a class="active" href="#">Research</a>
-  </nav>
-  <button class="signin">Sign In</button>
-</header>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo">The Editorial Scholar</div>
+        <nav class="nav-links">
+            <a href="#">Programs</a>
+            <a href="#">Scholarships</a>
+            <a href="#">Test Prep</a>
+            <a href="#">Visa Guide</a>
+            <a class="active" href="#">Research</a>
+        </nav>
+        <button class="signin">Sign In</button>
+    </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <h1>Curating Your <span>Academic Destiny</span></h1>
-    <p>
-      Navigate the world's most prestigious institutions. Our intelligence-driven
-      matcher aligns your intellectual profile with global opportunities and
-      certified scholarships.
-    </p>
-  </div>
-
-  <div class="hero-right">
-    <p class="db-label">LIVE DATABASE</p>
-    <h2>4,209+</h2>
-    <p>Institutions Analyzed</p>
-  </div>
-</section>
-
-<!-- MAIN -->
-<div class="container">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <h3>Refine Selection</h3>
-
-    <div class="filter">
-      <p class="label">TARGET COUNTRY</p>
-      <label><input type="checkbox" checked> United Kingdom</label>
-      <label><input type="checkbox"> Switzerland</label>
-      <label><input type="checkbox"> Singapore</label>
-    </div>
-
-    <div class="filter">
-      <p class="label">ACADEMIC MAJOR</p>
-      <select>
-        <option>Economics & Philosophy</option>
-      </select>
-    </div>
-
-    <div class="filter">
-      <p class="label">DEGREE LEVEL</p>
-      <div class="buttons">
-        <button class="active">Undergraduate</button>
-        <button>Postgraduate</button>
-        <button>Doctorate</button>
-      </div>
-    </div>
-
-    <div class="filter">
-      <p class="label">ANNUAL BUDGET RANGE</p>
-      <input type="range">
-      <div class="budget-value">
-        <p>£0</p>
-        <p>£50,000+</p>   
-      </div>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <main class="content">
-
-    <!-- SEARCH -->
-    <input class="search" type="text" placeholder="Search by University, Scholarship Name, or Research Topic...">
-
-    <!-- CARD -->
-    <div class="card">
-      <img src="https://picsum.photos/300/200" alt="">
-      <div class="card-content">
-        <p class="rank">QS RANK: #04</p>
-        <h3>London School of Political Science</h3>
-        <p>
-          Renowned for its focus on social sciences, providing a rigorous intellectual
-          environment for future global leaders.
-        </p>
-
-        <div class="tags">
-          <span>Full Scholarship</span>
-          <span>London, UK</span>
-          <span>Intake: Sept 2025</span>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-left">
+            <h1>Curating Your <span>Academic Destiny</span></h1>
+            <p>
+                Navigate the world's most prestigious institutions. Our intelligence-driven
+                matcher aligns your intellectual profile with global opportunities and
+                certified scholarships.
+            </p>
         </div>
 
-        <div class="actions">
-          <a href="#">View Prospectus</a>
-          <button>Match Eligibility</button>
+        <div class="hero-right">
+            <p class="db-label">LIVE DATABASE</p>
+            <h2>4,209+</h2>
+            <p>Institutions Analyzed</p>
         </div>
-      </div>
+    </section>
+
+    <!-- MAIN -->
+    <div class="container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3>Refine Selection</h3>
+
+            <div class="filter">
+                <p class="label">TARGET COUNTRY</p>
+                <label><input type="checkbox" checked> United Kingdom</label>
+                <label><input type="checkbox"> Switzerland</label>
+                <label><input type="checkbox"> Singapore</label>
+            </div>
+
+            <div class="filter">
+                <p class="label">ACADEMIC MAJOR</p>
+                <select>
+                    <option>Economics & Philosophy</option>
+                </select>
+            </div>
+
+            <div class="filter">
+                <p class="label">DEGREE LEVEL</p>
+                <div class="buttons">
+                    <button class="active">Undergraduate</button>
+                    <button>Postgraduate</button>
+                    <button>Doctorate</button>
+                </div>
+            </div>
+
+            <div class="filter">
+                <p class="label">ANNUAL BUDGET RANGE</p>
+                <input type="range">
+                <div class="budget-value">
+                    <p>£0</p>
+                    <p>£50,000+</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content">
+
+            <!-- SEARCH -->
+            <input class="search" type="text"
+                placeholder="Search by University, Scholarship Name, or Research Topic...">
+
+            <!-- CARD -->
+            <div class="card">
+                <img src="https://picsum.photos/300/200" alt="">
+                <div class="card-content">
+                    <p class="rank">QS RANK: #04</p>
+                    <h3>London School of Political Science</h3>
+                    <p>
+                        Renowned for its focus on social sciences, providing a rigorous intellectual
+                        environment for future global leaders.
+                    </p>
+
+                    <div class="tags">
+                        <span>Full Scholarship</span>
+                        <span>London, UK</span>
+                        <span>Intake: Sept 2025</span>
+                    </div>
+
+                    <div class="actions">
+                        <a href="#">View Prospectus</a>
+                        <button>Match Eligibility</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD -->
+            <div class="card">
+                <img src="https://picsum.photos/300/201" alt="">
+                <div class="card-content">
+                    <p class="rank">QS RANK: #12</p>
+                    <h3>Zurich Federal Institute</h3>
+                    <p>
+                        A hub for innovation and scientific excellence offering world-class facilities.
+                    </p>
+
+                    <div class="tags">
+                        <span>Editorial Choice</span>
+                        <span>Zurich, Switzerland</span>
+                    </div>
+
+                    <div class="actions">
+                        <a href="#">Research Programs</a>
+                        <button>Check Application</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD -->
+            <div class="card">
+                <img src="https://picsum.photos/300/202" alt="">
+                <div class="card-content">
+                    <p class="rank">QS RANK: #21</p>
+                    <h3>National University of Arts</h3>
+                    <p>
+                        Bridging Eastern and Western artistic traditions fostering creativity.
+                    </p>
+
+                    <div class="tags">
+                        <span>75% Tuition Waiver</span>
+                        <span>Singapore</span>
+                    </div>
+
+                    <div class="actions">
+                        <a href="#">Creative Portfolio</a>
+                        <button>Join Webinar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="results-container">
+                <p class="results" style="font-size: 14px; color: #555;">Showing 1-3 of 4,209+ results</p>
+                <div class="pagination">
+
+                    <button class="active">1</button>
+                    <button>2</button>
+                    <button>3</button>
+                    <span>...</span>
+                    <button>141</button>
+                </div>
+        </main>
     </div>
 
-    <!-- CARD -->
-    <div class="card">
-      <img src="https://picsum.photos/300/201" alt="">
-      <div class="card-content">
-        <p class="rank">QS RANK: #12</p>
-        <h3>Zurich Federal Institute</h3>
-        <p>
-          A hub for innovation and scientific excellence offering world-class facilities.
-        </p>
-
-        <div class="tags">
-          <span>Editorial Choice</span>
-          <span>Zurich, Switzerland</span>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-card">
+            <p class="footTop">The Editorial Scholar</p>
+            <p>empowering global minds through curated <br> academic intelligence and <br> verified schlarship matching.
+            </p>
         </div>
 
-        <div class="actions">
-          <a href="#">Research Programs</a>
-          <button>Check Application</button>
+
+        <div class="footer-card">
+            <p class="footTop">Exploration</p>
+            <p>About Us</p>
+            <p>Contact Support</p>
+            <p>Research Papers</p>
         </div>
-      </div>
-    </div>
-
-    <!-- CARD -->
-    <div class="card">
-      <img src="https://picsum.photos/300/202" alt="">
-      <div class="card-content">
-        <p class="rank">QS RANK: #21</p>
-        <h3>National University of Arts</h3>
-        <p>
-          Bridging Eastern and Western artistic traditions fostering creativity.
-        </p>
-
-        <div class="tags">
-          <span>75% Tuition Waiver</span>
-          <span>Singapore</span>
+        <div class="footer-card" >
+            <p class="footTop">Integrity</p>
+            <p>Academic</p>
+            <p>Privacy Policy</p>
+            <p>Terms of Service</p>
+        </div>
+        <div class="footer-card">
+            <p class="footTop">Newsletter</p>
+            <p>© 2024 The Editorial Scholar</p>
         </div>
 
-        <div class="actions">
-          <a href="#">Creative Portfolio</a>
-          <button>Join Webinar</button>
-        </div>
-      </div>
-    </div>
-    <div class="results-container">
-         <p class="results" style="font-size: 14px; color: #555;">Showing 1-3 of 4,209+ results</p>
-         <div class="pagination">
-          
-          <button class="active">1</button>
-          <button>2</button>
-          <button>3</button>
-          <span>...</span>
-          <button>141</button>
-    </div>
-  </main>
-</div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <p>© 2024 The Editorial Scholar</p>
-</footer>
+    </footer>
 
 </body>
+
 </html>
