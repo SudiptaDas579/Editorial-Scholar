@@ -22,6 +22,19 @@
 
   /* Slate accent */
   --color-slate-muted: #8293B5;
+
+  /* ── Test Prep page tokens ── */
+  --color-navy:        #031632;
+  --color-navy-2:      #1A2B48;
+  --color-navy-3:      #0d2144;
+  --color-gold:        #775A19;
+  --color-gold-lt:     #A16207;
+  --color-gold-bg:     #FED488;
+  --color-slate:       #44474D;
+  --color-muted:       #75777E;
+  --color-border:      #E2E8F0;
+  --color-bg:          #F8F9FA;
+  --color-card-border: rgba(197, 198, 206, 0.35);
 }
 
 /* ─── Custom utilities ──────────────────────────────────
@@ -38,20 +51,61 @@
 @utility border-gold-faint {
   border: 2px solid rgba(119, 90, 25, 0.2);
 }
-/* signin-specific additions */
+
+@utility btn-login {
+  background: var(--color-navy);
+  color: #fff;
+  font-family: var(--font-manrope);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+@utility exam-card-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-navy);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.6rem 1.2rem;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+/* ─── Base layer ────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--color-bg);
+    font-family: var(--font-manrope);
+    color: var(--color-slate);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ─── Sign-in panel ─────────────────────────────────── */
 .signin-panel-bg {
-  background: linear-gradient(to bottom right, #0f2b5b 0%, #1a4a3a 60%, #2d5a20 100%);
+  background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&q=80') center/cover no-repeat #031632;
 }
 .signin-panel-bg::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.07) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.28) 0%, transparent 50%);
+    radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 0, 0, 0.28) 0%, transparent 50%);
   pointer-events: none;
 }
 
+/* ─── Sign-in inputs ────────────────────────────────── */
 .signin-input {
   padding: 13px 4px;
   border: none;
@@ -66,21 +120,7 @@
   outline: none;
 }
 
-.signin-divider {
-  display: flex;
-  align-items: center;
-}
-.signin-divider::before,
-.signin-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: rgba(197, 198, 206, 0.45);
-}
-
-.signin-panel-bg {
-  background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&q=80') center/cover no-repeat #031632;
-}
+/* ─── Field inputs ──────────────────────────────────── */
 .field-input {
   border: none;
   border-bottom: 1px solid #C5C6CE;
@@ -92,7 +132,10 @@
   color: #031632;
   outline: none;
 }
-.field-input::placeholder { color: #B0B2B8; }
+.field-input::placeholder {
+  color: #B0B2B8;
+}
+
 .field-row-input {
   border: none;
   background: transparent;
@@ -102,7 +145,11 @@
   outline: none;
   flex: 1;
 }
-.field-row-input::placeholder { color: #B0B2B8; }
+.field-row-input::placeholder {
+  color: #B0B2B8;
+}
+
+/* ─── Sign-in divider ───────────────────────────────── */
 .signin-divider {
   display: flex;
   align-items: center;
@@ -114,29 +161,35 @@
   flex: 1;
   border-top: 1px solid #E8E9EC;
 }
-.signin-panel-bg {
-      background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&q=80') center/cover no-repeat #031632;
-    }
-.field-input {
-  border: none;
-  border-bottom: 1px solid #C5C6CE;
-  padding: 8px 0;
-  width: 100%;
-  background: transparent;
-  font-family: 'Manrope', sans-serif;
-  font-size: 15px;
-  color: #031632;
-  outline: none;
+
+/* ─── Exam card hover ───────────────────────────────── */
+.exam-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.field-input::placeholder { color: #B0B2B8; }
-.signin-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
+.exam-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(3, 22, 50, 0.12);
+  z-index: 2;
 }
-.signin-divider::before,
-.signin-divider::after {
-  content: '';
-  flex: 1;
-  border-top: 1px solid #E8E9EC;
+.exam-card:hover .cta-btn {
+  background: #A16207;
+  color: #fff;
+}
+
+/* ─── Resource item hover ───────────────────────────── */
+.resource-item {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.resource-item:hover {
+  border-color: rgba(119, 90, 25, 0.4);
+  box-shadow: 0 4px 16px rgba(3, 22, 50, 0.07);
+}
+
+/* ─── Outline button hover ──────────────────────────── */
+.btn-outline {
+  transition: background 0.2s, color 0.2s;
+}
+.btn-outline:hover {
+  background: #031632;
+  color: #fff;
 }
