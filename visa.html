@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Editorial Scholar - Visa Guide</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0A192F;
+            --accent: #8B6E30;
+            --bg: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-muted: #666;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header & Nav */
+        header { padding: 30px 0; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.2rem; }
+        nav a { margin-left: 25px; text-decoration: none; color: var(--primary); font-size: 0.9rem; }
+        .sign-in { background: var(--primary); color: white; padding: 8px 20px; border-radius: 4px; }
+
+        /* Hero Section */
+        .hero { padding: 60px 0; display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: center; }
+        .hero-label { text-transform: uppercase; letter-spacing: 2px; font-size: 0.7rem; color: var(--accent); margin-bottom: 10px; display: block; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin: 0; line-height: 1.1; }
+        h1 em { font-style: italic; font-weight: 400; }
+        .hero-desc { color: var(--text-muted); font-size: 1.1rem; }
+
+        /* Progress Tracker */
+        .tracker { display: flex; justify-content: space-between; padding: 40px 0; border-top: 1px solid var(--border); position: relative; }
+        .tracker::before { content: ''; position: absolute; top: 58px; left: 0; right: 0; height: 1px; background: var(--border); z-index: 1; }
+        .step { position: relative; z-index: 2; text-align: center; }
+        .step-icon { width: 40px; height: 40px; background: white; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .step.active .step-icon { background: var(--accent); color: white; border-color: var(--accent); }
+        .step-label { font-size: 0.8rem; font-weight: 600; }
+
+        /* Content Grid */
+        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; margin-top: 50px; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 30px; }
+
+        /* Dossier Cards */
+        .dossier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; padding: 25px; border: 1px solid var(--border); position: relative; }
+        .card h3 { margin: 15px 0 10px; font-size: 1rem; }
+        .card p { font-size: 0.85rem; color: var(--text-muted); }
+        .upload-btn { display: block; width: 100%; padding: 10px; border: 1px dashed var(--border); background: none; margin-top: 15px; cursor: pointer; font-size: 0.8rem; }
+        .card.featured { grid-column: span 2; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .btn-gold { background: var(--accent); color: white; border: none; padding: 12px 25px; cursor: pointer; }
+
+        /* Sidebar Accordion */
+        .accordion { background: white; border: 1px solid var(--border); margin-bottom: 30px; }
+        .accordion-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 600; }
+        .accordion-body { padding: 20px; background: #fafafa; }
+        .price-box { display: flex; gap: 10px; margin-top: 15px; }
+        .price-item { flex: 1; background: white; padding: 10px; border: 1px solid var(--border); }
+        .price-item label { display: block; font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); }
+        .price-item span { font-weight: 700; font-size: 0.9rem; }
+
+        /* Pre-Departure Audit */
+        .audit-section { margin-top: 100px; padding-bottom: 80px; border-top: 1px solid var(--border); padding-top: 60px; }
+        .audit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .audit-item h4 { margin: 0 0 10px; font-size: 1rem; }
+        .audit-num { color: var(--accent); margin-right: 10px; font-family: 'Playfair Display'; }
+
+        /* Footer */
+        footer { background: #fff; padding: 60px 0; border-top: 1px solid var(--border); font-size: 0.8rem; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; }
+        .footer-logo { font-weight: bold; margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo">The Editorial Scholar</div>
+        <nav>
+            <a href="#">Programs</a>
+            <a href="#">Scholarships</a>
+            <a href="#">Test Prep</a>
+            <a href="#" style="text-decoration: underline; color: var(--accent);">Visa Guide</a>
+            <a href="#">Research</a>
+            <a href="#" class="sign-in">Sign In</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <span class="hero-label">Compliance & Mobility</span>
+            <h1>Navigating the <em>Global Gateway</em></h1>
+        </div>
+        <p class="hero-desc">
+            A curated roadmap for your academic migration. We streamline the complexities of international documentation into a single, authoritative checklist.
+        </p>
+    </section>
+
+    <div class="tracker">
+        <div class="step active"><div class="step-icon"><i data-lucide="check"></i></div><span class="step-label">Passport</span></div>
+        <div class="step active"><div class="step-icon"><i data-lucide="graduation-cap"></i></div><span class="step-label">Admission</span></div>
+        <div class="step active"><div class="step-icon"><i data-lucide="file-text"></i></div><span class="step-label">Visa Application</span></div>
+        <div class="step"><div class="step-icon"><i data-lucide="banknote"></i></div><span class="step-label">Funding Proof</span></div>
+        <div class="step"><div class="step-icon"><i data-lucide="plane"></i></div><span class="step-label">Departure</span></div>
+    </div>
+
+    <main class="main-grid">
+        <section>
+            <h2><i data-lucide="briefcase" style="width: 18px; color: var(--accent)"></i> Essential Dossier</h2>
+            <div class="dossier-grid">
+                <div class="card">
+                    <i data-lucide="layout"></i>
+                    <h3>Proof of Funds</h3>
+                    <p>Submit bank statements from the last 6 months or scholarship award letters.</p>
+                    <button class="upload-btn">UPLOAD PDF</button>
+                </div>
+                <div class="card">
+                    <i data-lucide="file"></i>
+                    <h3>Valid Passport</h3>
+                    <p>Scanned copy of the bio-data page. Validated until 12/2026.</p>
+                    <button class="upload-btn">PASSPORT_FINAL.PDF</button>
+                </div>
+                <div class="card featured">
+                    <div>
+                        <h3>Letter of Acceptance (LOA)</h3>
+                        <p style="color: #ccc">Your university-issued LOA is the primary trigger for your visa interview.</p>
+                        <button class="btn-gold">VERIFY STATUS</button>
+                    </div>
+                    <i data-lucide="shield-check" style="width: 60px; height: 60px; opacity: 0.2;"></i>
+                </div>
+                <div class="card">
+                    <i data-lucide="plus-square"></i>
+                    <h3>Medical Records</h3>
+                    <p>Country-specific health clearances and immunization records.</p>
+                    <button class="upload-btn">VIEW CHECKLIST</button>
+                </div>
+                <div class="card">
+                    <i data-lucide="layers"></i>
+                    <h3>Academic Transcripts</h3>
+                    <p>Certified copies of your highest degree and grade sheets.</p>
+                    <button class="upload-btn">UPLOAD DOCS</button>
+                </div>
+            </div>
+        </section>
+
+        <aside>
+            <h3 style="font-size: 0.9rem; margin-bottom: 20px;">Visa Requirements by Region</h3>
+            <div class="accordion">
+                <div class="accordion-header">
+                    <span><i data-lucide="globe" style="width: 14px; vertical-align: middle; margin-right: 8px;"></i> European Union (Schengen)</span>
+                    <i data-lucide="chevron-down"></i>
+                </div>
+            </div>
+            <div class="accordion" style="border: 1px solid var(--accent)">
+                <div class="accordion-header">
+                    <span><i data-lucide="star" style="width: 14px; color: var(--accent); vertical-align: middle; margin-right: 8px;"></i> North America (F-1 / Study Permit)</span>
+                    <i data-lucide="chevron-up"></i>
+                </div>
+                <div class="accordion-body">
+                    <p style="font-size: 0.75rem; color: var(--text-muted)">Requires I-20 or DS-2019. SEVIS fee must be paid 3 days prior to the embassy interview.</p>
+                    <div class="price-box">
+                        <div class="price-item"><label>Fees</label><span>$160 - $350</span></div>
+                        <div class="price-item"><label>Validity</label><span>5 Years</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--accent); padding: 30px; color: white; margin-top: 40px;">
+                <h4 style="margin-top: 0">Need Expert Review?</h4>
+                <p style="font-size: 0.8rem; opacity: 0.9;">Our senior advisors offer a 48-hour document audit to ensure 99% approval rate.</p>
+                <button style="background: var(--primary); color: white; border: none; padding: 10px 20px; width: 100%; font-weight: 600;">BOOK AUDIT</button>
+            </div>
+        </aside>
+    </main>
+
+    <section class="audit-section">
+        <h2 style="font-size: 1.8rem">Pre-Departure Audit</h2>
+        <div class="audit-grid">
+            <div class="audit-item">
+                <h4><span class="audit-num">01</span> Digital Redundancy</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted)">Ensure all physical documents have encrypted cloud backups and local offline copies on a secured drive.</p>
+            </div>
+            <div class="audit-item">
+                <h4><span class="audit-num">02</span> Notarization</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted)">Check if your destination requires Apostille or Embassy legalization for your academic transcripts.</p>
+            </div>
+            <div class="audit-item">
+                <h4><span class="audit-num">03</span> Financial Liquidity</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted)">Verify that your funds are accessible via international banking or that you have a local account ready.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer>
+    <div class="container footer-grid">
+        <div>
+            <span class="footer-logo">The Editorial Scholar</span>
+            <p style="color: var(--text-muted)">© 2024 — The Editorial Scholar. Curating Global Futures.</p>
+        </div>
+        <div>
+            <div style="font-weight: 600; margin-bottom: 15px;">Governance</div>
+            <div style="color: var(--text-muted)">About Us<br>Terms of Service<br>Privacy Policy</div>
+        </div>
+        <div>
+            <div style="font-weight: 600; margin-bottom: 15px;">Resources</div>
+            <div style="color: var(--text-muted)">Contact Support<br><span style="color: var(--accent)">Academic Integrity</span><br>Scholar Blog</div>
+        </div>
+        <div>
+            <div style="font-weight: 600; margin-bottom: 15px;">Journal</div>
+            <input type="text" placeholder="Email address" style="width: 100%; padding: 8px; border: 1px solid var(--border);">
+        </div>
+    </div>
+</footer>
+
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>
