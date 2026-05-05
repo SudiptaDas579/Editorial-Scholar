@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | The Editorial Scholar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/output.css" />
+
+</head>
+<body class="bg-[#F8F9FA] min-h-screen flex flex-col font-manrope">
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F1F5F9]">
+    <div class="px-8 h-[60px] flex items-center justify-between gap-4">
+      <span class="font-newsreader font-bold text-3xl text-[#0F172A] whitespace-nowrap">
+        The Editorial Scholar
+      </span>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#A16207] border-b-2 border-[#A16207] pb-1">Programs</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Scholarships</a>
+        <a href="testPrep.html" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Test Prep</a>
+        <a href="#" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Visa Guide</a>
+        <a href="research.html" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Research</a>
+      </div>
+      <a href="index.html" class="font-newsreader font-semibold text-sm tracking-[0.35px] text-[#031632]">
+        Back To Explore
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="flex-1 flex justify-center items-center px-8 pt-[10px] min-h-[750px]">
+    <div class="flex w-[1024px] max-w-[1024px] h-[600px] min-h-[550px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] overflow-hidden rounded-xl">
+
+      <!-- LEFT PANEL -->
+      <div class="relative flex-1 min-w-0 signin-panel-bg overflow-hidden">
+        <div class="absolute inset-0 bg-[rgba(3,22,50,0.42)]"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-[rgba(3,22,50,0.88)] via-[rgba(3,22,50,0.08)] to-transparent"></div>
+        <div class="absolute left-10 right-10 bottom-11 flex flex-col gap-4">
+          <p class="font-newsreader font-normal text-[28px] leading-[36px] text-white">
+            "Education is the most powerful weapon which you can use to change the world."
+          </p>
+          <div class="flex items-center gap-3 mt-1">
+            <div class="w-9 h-px bg-[#FFDEA5] shrink-0"></div>
+            <span class="font-newsreader font-bold text-base text-white">
+              The Editorial Scholar
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="relative flex-1 min-w-0 bg-white flex flex-col justify-center px-14">
+
+        <!-- Heading -->
+        <div class="flex flex-col gap-1.5 mb-7">
+          <h1 class="font-newsreader font-normal text-[34px] leading-[40px] text-[#031632]">
+            Welcome Back
+          </h1>
+          <p class="font-manrope font-normal text-sm leading-5 text-[#44474D]">
+            Continue your journey in curated global education.
+          </p>
+        </div>
+
+        <!-- Form fields -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Email -->
+          <div class="flex flex-col gap-1">
+            <label for="email" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#75777E]">
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              placeholder="scholar@institution.edu"
+              autocomplete="email"
+              class="field-input"
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="flex flex-col gap-1">
+            <div class="flex justify-between items-center mb-0.5">
+              <label for="password" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#75777E]">
+                Password
+              </label>
+              <a href="#" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#775A19] hover:text-[#A16207] transition-colors">
+                Forgot Password
+              </a>
+            </div>
+            <div class="flex items-center border-b border-[#C5C6CE] pb-2 pt-2 gap-2">
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                class="flex-1 border-none bg-transparent font-manrope text-[15px] text-[#031632] placeholder-[#B0B2B8] outline-none"
+              />
+              <button
+                onclick="var i=document.getElementById('password');i.type=i.type==='password'?'text':'password'"
+                class="shrink-0 opacity-40 hover:opacity-70 transition-opacity"
+                aria-label="Toggle password"
+              >
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.469.0/icons/eye.svg" class="w-4 h-4" alt="show" />
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col gap-3 mt-6">
+
+          <!-- CTA -->
+          <button
+            type="button"
+            class="flex items-center justify-center gap-2 w-full h-[46px] px-6 bg-[#031632] rounded-md font-manrope font-bold text-sm text-white hover:opacity-85 transition-opacity cursor-pointer"
+          >
+            Sign In &rarr;
+          </button>
+
+          <!-- Divider -->
+          <div class="signin-divider w-full py-1">
+            <span class="px-4 bg-white font-manrope font-bold text-[10px] leading-4 tracking-[2px] uppercase text-[#A0A2AA] whitespace-nowrap">
+              or continue with
+            </span>
+          </div>
+
+          <!-- Social buttons -->
+          <div class="flex gap-3">
+            <a href="#" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+              <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4" />
+              Google
+            </a>
+            <a href="#" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+              <img
+                src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg"
+                alt="LinkedIn"
+                class="w-4 h-4"
+                style="filter: invert(33%) sepia(98%) saturate(600%) hue-rotate(175deg) brightness(90%) contrast(101%);"
+              />
+              LinkedIn
+            </a>
+          </div>
+
+          <!-- Sign up link -->
+          <p class="text-center font-manrope font-normal text-sm text-[#44474D]">
+            New to The Editorial Scholar?
+            <a href="signup.html" class="font-semibold text-[#775A19] hover:text-[#A16207] transition-colors">Create an account</a>
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-[#F8FAFC] border-t border-[#E2E8F0] pt-[10px]">
+    <div class="max-w-[1280px] mx-auto px-8">
+      <div class="grid grid-cols-4 gap-8">
+
+        <div class="flex flex-col gap-4">
+          <p class="font-newsreader font-bold text-lg text-[#0F172A]">The Editorial Scholar</p>
+          <p class="font-manrope font-normal text-sm leading-5 tracking-[0.35px] text-[#64748B]">
+            &copy; 2026 The Editorial Scholar.<br/>Curating Global Futures.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Company</p>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">About Us</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Contact Support</a>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Social</p>
+          <div class="flex items-center gap-4 mt-1">
+            <a href="#" class="opacity-50 hover:opacity-100 transition-opacity">
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/x.svg" alt="X / Twitter" class="w-4 h-4" style="filter: invert(30%) sepia(5%) saturate(500%) hue-rotate(180deg);" />
+            </a>
+            <a href="#" class="opacity-50 hover:opacity-100 transition-opacity">
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg" alt="LinkedIn" class="w-4 h-4" style="filter: invert(33%) sepia(98%) saturate(600%) hue-rotate(175deg) brightness(90%) contrast(101%);" />
+            </a>
+            <a href="#" class="opacity-50 hover:opacity-100 transition-opacity">
+              <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" alt="Instagram" class="w-4 h-4" style="filter: invert(30%) sepia(5%) saturate(500%) hue-rotate(180deg);" />
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

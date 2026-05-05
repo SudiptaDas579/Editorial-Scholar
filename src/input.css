@@ -38,3 +38,105 @@
 @utility border-gold-faint {
   border: 2px solid rgba(119, 90, 25, 0.2);
 }
+/* signin-specific additions */
+.signin-panel-bg {
+  background: linear-gradient(to bottom right, #0f2b5b 0%, #1a4a3a 60%, #2d5a20 100%);
+}
+.signin-panel-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.28) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.signin-input {
+  padding: 13px 4px;
+  border: none;
+  border-bottom: 1px solid #6B7280;
+  border-radius: 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+.signin-input:focus {
+  border-bottom-color: #031632;
+  box-shadow: none;
+  outline: none;
+}
+
+.signin-divider {
+  display: flex;
+  align-items: center;
+}
+.signin-divider::before,
+.signin-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(197, 198, 206, 0.45);
+}
+
+.signin-panel-bg {
+  background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&q=80') center/cover no-repeat #031632;
+}
+.field-input {
+  border: none;
+  border-bottom: 1px solid #C5C6CE;
+  padding: 8px 0;
+  width: 100%;
+  background: transparent;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  color: #031632;
+  outline: none;
+}
+.field-input::placeholder { color: #B0B2B8; }
+.field-row-input {
+  border: none;
+  background: transparent;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  color: #031632;
+  outline: none;
+  flex: 1;
+}
+.field-row-input::placeholder { color: #B0B2B8; }
+.signin-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.signin-divider::before,
+.signin-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #E8E9EC;
+}
+.signin-panel-bg {
+      background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=900&q=80') center/cover no-repeat #031632;
+    }
+.field-input {
+  border: none;
+  border-bottom: 1px solid #C5C6CE;
+  padding: 8px 0;
+  width: 100%;
+  background: transparent;
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px;
+  color: #031632;
+  outline: none;
+}
+.field-input::placeholder { color: #B0B2B8; }
+.signin-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.signin-divider::before,
+.signin-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #E8E9EC;
+}
