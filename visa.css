@@ -1,0 +1,513 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'DM Sans',sans-serif;
+}
+
+body{
+background:#f8f9fa;
+color:#031632;
+line-height:1.6;
+}
+
+a{
+text-decoration:none;
+}
+
+.container{
+width:90%;
+max-width:1400px;
+margin:auto;
+}
+
+/* =========================
+NAVBAR
+========================= */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:#031632;
+color:#fff;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:24px;
+font-weight:700;
+}
+
+.navbar nav{
+display:flex;
+gap:25px;
+}
+
+.navbar nav a{
+color:#fff;
+font-weight:500;
+transition:.3s;
+}
+
+.navbar nav a:hover
+
+/* =========================
+HERO
+========================= */
+
+.hero{
+background:linear-gradient(
+135deg,
+#031632,
+#0b2447
+);
+padding:100px 40px;
+text-align:center;
+color:#fff;
+}
+
+.hero h1{
+font-size:54px;
+margin-bottom:20px;
+}
+
+.hero p{
+max-width:800px;
+margin:auto;
+font-size:18px;
+}
+
+.btn{
+display:inline-block;
+margin-top:25px;
+padding:14px 28px;
+background:#A16207;
+color:#fff;
+border-radius:8px;
+font-weight:600;
+transition:.3s;
+}
+
+.btn:hover
+
+/* =========================
+SECTION
+========================= */
+
+section{
+padding:70px 40px;
+}
+
+section h2{
+font-size:34px;
+margin-bottom:30px;
+color:#031632;
+}
+
+/* =========================
+ELIGIBILITY
+========================= */
+
+.eligibility{
+background:#fff;
+}
+
+.eligibility-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+.eligibility input,
+.eligibility select{
+padding:14px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.eligibility button{
+background:#031632;
+color:#fff;
+border:none;
+border-radius:8px;
+cursor:pointer;
+padding:14px;
+}
+
+#result{
+margin-top:20px;
+font-size:20px;
+font-weight:700;
+color:#A16207;
+}
+
+/* =========================
+APPLICATION FORM
+========================= */
+
+.application-section{
+background:#fff;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(300px,1fr));
+gap:18px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea{
+width:100%;
+padding:14px;
+border:1px solid #d6d6d6;
+border-radius:8px;
+font-size:15px;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus{
+outline:none;
+border-color:#A16207;
+}
+
+.submit-btn{
+margin-top:25px;
+padding:15px 30px;
+background:#031632;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.submit-btn:hover
+
+/* =========================
+UPLOADS
+========================= */
+
+.upload-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-top:25px;
+}
+
+.upload-grid div{
+background:#fafafa;
+padding:15px;
+border-radius:8px;
+border:1px solid #eee;
+}
+
+.upload-grid label{
+display:block;
+margin-bottom:8px;
+font-weight:600;
+}
+
+/* =========================
+SUCCESS / ERROR
+========================= */
+
+.success{
+background:#d4edda;
+color:#155724;
+padding:15px;
+border-radius:8px;
+margin-bottom:20px;
+}
+
+.error{
+background:#f8d7da;
+color:#721c24;
+padding:15px;
+border-radius:8px;
+margin-bottom:20px;
+}
+
+/* =========================
+TRACKER
+========================= */
+
+.tracker-section{
+background:#f7f8fa;
+}
+
+.tracker-section form{
+display:flex;
+gap:15px;
+margin-bottom:25px;
+}
+
+.tracker-section input{
+flex:1;
+padding:14px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.tracker-section button{
+padding:14px 25px;
+border:none;
+background:#031632;
+color:#fff;
+border-radius:8px;
+cursor:pointer;
+}
+
+.tracker-card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:
+0 10px 25px rgba(0,0,0,.05);
+}
+
+.tracker-card h3{
+margin-bottom:10px;
+}
+
+.tracker-card strong{
+color:#A16207;
+}
+
+/* =========================
+AUDIT
+========================= */
+
+.audit-section{
+background:white;
+}
+
+.audit-section form{
+display:flex;
+flex-direction:column;
+gap:15px;
+max-width:700px;
+}
+
+.audit-section input,
+.audit-section textarea,
+.audit-section select{
+padding:14px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+.audit-section textarea{
+height:150px;
+resize:none;
+}
+
+.audit-section button{
+background:#031632;
+color:#fff;
+border:none;
+padding:14px;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* =========================
+FAQ
+========================= */
+
+.faq-section{
+background:#f7f8fa;
+}
+
+.faq-item{
+background:white;
+margin-bottom:12px;
+border-radius:8px;
+overflow:hidden;
+box-shadow:
+0 2px 8px rgba(0,0,0,.05);
+}
+
+.faq-question{
+width:100%;
+text-align:left;
+padding:18px;
+border:none;
+background:white;
+cursor:pointer;
+font-weight:700;
+font-size:16px;
+}
+
+.faq-answer{
+display:none;
+padding:18px;
+border-top:1px solid #eee;
+}
+
+.faq-answer.show{
+display:block;
+}
+
+/* =========================
+ADMIN
+========================= */
+
+.admin-wrapper{
+padding:40px;
+}
+
+.admin-wrapper h1{
+margin-bottom:30px;
+}
+
+.admin-card{
+background:white;
+padding:25px;
+border-radius:10px;
+margin-bottom:30px;
+box-shadow:
+0 10px 30px rgba(0,0,0,.05);
+}
+
+.admin-card table{
+width:100%;
+border-collapse:collapse;
+}
+
+.admin-card th,
+.admin-card td{
+padding:14px;
+border-bottom:1px solid #eee;
+text-align:left;
+}
+
+.admin-card th{
+background:#031632;
+color:white;
+}
+
+.admin-card button{
+padding:8px 16px;
+background:#A16207;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.audit-card{
+background:#fafafa;
+padding:15px;
+margin-bottom:15px;
+border-radius:8px;
+}
+
+/* =========================
+MODAL
+========================= */
+
+.admin-modal{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+}
+
+.admin-modal-content{
+background:white;
+width:600px;
+max-width:90%;
+margin:80px auto;
+padding:25px;
+border-radius:10px;
+position:relative;
+}
+
+.close-modal{
+position:absolute;
+top:15px;
+right:20px;
+font-size:24px;
+cursor:pointer;
+}
+
+/* =========================
+FOOTER
+========================= */
+
+footer{
+background:#031632;
+color:white;
+padding:30px;
+text-align:center;
+margin-top:60px;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:992px){
+
+.hero h1{
+font-size:42px;
+}
+
+.navbar{
+padding:20px;
+}
+
+}
+
+@media(max-width:768px){
+
+.navbar{
+flex-direction:column;
+gap:15px;
+}
+
+.hero{
+padding:70px 20px;
+}
+
+.hero h1{
+font-size:34px;
+}
+
+section{
+padding:50px 20px;
+}
+
+.tracker-section form{
+flex-direction:column;
+}
+
+}
+
+@media(max-width:480px){
+
+.hero h1{
+font-size:28px;
+}
+
+section h2{
+font-size:26px;
+}
+
+.submit-btn{
+width:100%;
+}
+
+}
