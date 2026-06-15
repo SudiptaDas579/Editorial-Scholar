@@ -1,7 +1,7 @@
 <?php
 // auth/signin.php
-require_once __DIR__ . '/../includes/auth_helpers.php';
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/includes/auth_helpers.php';
+require_once __DIR__ . '/config/db.php';
 
 // Already logged in → redirect to own dashboard
 if (is_logged_in()) {
@@ -68,10 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+
+
+
 $pageTitle = 'Sign In';
-$cssPath   = '../dist/output.css';
+$cssPath   = './src/output.css';
 ?>
-<?php include __DIR__ . '/../includes/head.php'; ?>
+<?php include __DIR__ . '/includes/head.php'; ?>
 
 <main class="min-h-screen flex items-center justify-center pt-[60px] px-4 py-12">
   <div class="w-full max-w-md">

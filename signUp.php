@@ -1,7 +1,7 @@
 <?php
 // auth/signup.php — Student registration
-require_once __DIR__ . '/../includes/auth_helpers.php';
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/includes/auth_helpers.php';
+require_once __DIR__ . '/config/db.php';
 
 if (is_logged_in()) {
     redirect('/dashboard/' . $_SESSION['role'] . '.php');
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Create Account';
-$cssPath   = '../dist/output.css';
+$cssPath   = './src/output.css';
 ?>
 <?php include __DIR__ . '/../includes/head.php'; ?>
 
