@@ -2,9 +2,14 @@
 // includes/head.php  — shared <head> + nav partial
 // Usage: include __DIR__ . '/../includes/head.php';
 // Expects: $pageTitle (string), $activeNav (string, optional)
+// Optional: $authPage = 'signin' | 'signup'
+//   When set, the right-side nav area shows a single button linking to
+//   the *other* auth page instead of the normal Sign In / Get Started
+//   (or Dashboard / Sign Out) pair.
 
 $pageTitle  = $pageTitle  ?? 'The Editorial Scholar';
 $activeNav  = $activeNav  ?? '';
+$authPage   = $authPage   ?? '';
 $isLoggedIn = isset($_SESSION['user_id']);
 $role       = $_SESSION['role'] ?? '';
 ?>
@@ -57,7 +62,19 @@ $role       = $_SESSION['role'] ?? '';
     </div>
 
     <div class="flex items-center gap-4 mr-3">
-      <?php if ($isLoggedIn): ?>
+      <?php if ($authPage === 'signin'): ?>
+        <!-- On Sign In page: single button to switch to Sign Up -->
+        <a href="/auth/signUp.php"
+           class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
+          Sign Up
+        </a>
+      <?php elseif ($authPage === 'signup'): ?>
+        <!-- On Sign Up page: single button to switch to Sign In -->
+        <a href="/auth/signIn.php"
+           class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
+          Sign In
+        </a>
+      <?php elseif ($isLoggedIn): ?>
         <!-- Logged-in state -->
         <a href="/dashboard/<?= $role ?>.php"
            class="font-manrope font-medium text-sm text-[#475569] hover:text-[#0F172A] transition-colors flex items-center gap-1">
@@ -68,11 +85,11 @@ $role       = $_SESSION['role'] ?? '';
           Sign Out
         </a>
       <?php else: ?>
-        <a href="/auth/signin.php"
+        <a href="/auth/signIn.php"
            class="font-manrope font-medium text-sm text-[#475569] hover:text-[#0F172A] transition-colors">
           Sign In
         </a>
-        <a href="/auth/signup.php"
+        <a href="/auth/signUp.php"
            class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
           Get Started
         </a>
