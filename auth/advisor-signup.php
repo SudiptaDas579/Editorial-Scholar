@@ -2,9 +2,10 @@
 // auth/advisor-signup.php — Advisor registration (creates user + advisor_application)
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/app.php';
 
 if (is_logged_in()) {
-    redirect('/dashboard/' . $_SESSION['role'] . '.php');
+    redirect(BASE_URL . '/dashboard/' . $_SESSION['role'] . '.php');
 }
 
 $errors = [];
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (strlen($values['qualifications']) < 20) $errors[] = 'Please describe your qualifications (min 20 characters).';
         if (strlen($values['bio']) < 30)      $errors[] = 'Bio must be at least 30 characters.';
         if ($values['experience_yrs'] < 0)   $errors[] = 'Experience years must be 0 or more.';
+        if (!isset($_POST['terms']))          $errors[] = 'You must agree to the Terms of Service and Advisor Code of Conduct.';
 
         if (empty($errors)) {
             $pdo = getDB();
@@ -82,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->commit();
 
                     flash('success', 'Application submitted! Our team will review it and notify you at ' . $values['email'] . ' within 2–3 business days.');
-                    redirect('/auth/signin.php');
+                    redirect(BASE_URL . '/auth/signIn.php');
 
                 } catch (\Throwable $e) {
                     $pdo->rollBack();
@@ -108,7 +110,8 @@ $specializationOptions = [
 ];
 
 $pageTitle = 'Apply as Advisor';
-$cssPath   = '../dist/output.css';
+$activeNav = '';
+$cssPath   = BASE_URL . '/src/output.css';
 ?>
 <?php include __DIR__ . '/../includes/head.php'; ?>
 
@@ -286,9 +289,9 @@ $cssPath   = '../dist/output.css';
             <input type="checkbox" name="terms" required class="accent-[#775A19] mt-0.5 flex-shrink-0" />
             <span class="font-manrope text-sm text-[#374151]">
               I confirm that all information provided is accurate and I agree to the
-              <a href="/terms.html" class="text-[#A16207] hover:underline">Terms of Service</a>
+              <a href="<?= BASE_URL ?>/terms.html" class="text-[#A16207] hover:underline">Terms of Service</a>
               and
-              <a href="/advisor-code.html" class="text-[#A16207] hover:underline">Advisor Code of Conduct</a>
+              <a href="<?= BASE_URL ?>/advisor-code.html" class="text-[#A16207] hover:underline">Advisor Code of Conduct</a>
             </span>
           </label>
 
@@ -307,14 +310,14 @@ $cssPath   = '../dist/output.css';
 
         <p class="text-center mt-6 font-manrope text-sm text-[#6B7280]">
           Already have an account?
-          <a href="/auth/signin.php" class="text-[#A16207] font-semibold hover:underline">Sign In</a>
+          <a href="<?= BASE_URL ?>/auth/signIn.php" class="text-[#A16207] font-semibold hover:underline">Sign In</a>
         </p>
 
       </div>
     </div>
 
     <p class="text-center mt-6 font-manrope text-sm text-[#9CA3AF]">
-      <a href="/index.html" class="hover:text-[#374151] transition-colors">
+      <a href="<?= BASE_URL ?>/index.html" class="hover:text-[#374151] transition-colors">
         <i class="ri-arrow-left-line"></i> Back to home
       </a>
     </p>

@@ -7,6 +7,8 @@
 //   the *other* auth page instead of the normal Sign In / Get Started
 //   (or Dashboard / Sign Out) pair.
 
+require_once __DIR__ . '/../config/app.php';
+
 $pageTitle  = $pageTitle  ?? 'The Editorial Scholar';
 $activeNav  = $activeNav  ?? '';
 $authPage   = $authPage   ?? '';
@@ -49,47 +51,47 @@ $role       = $_SESSION['role'] ?? '';
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#F1F5F9] shadow-sm">
   <div class="px-8 h-[60px] flex items-center justify-between gap-4">
 
-    <a href="/index.html" class="font-newsreader font-bold text-2xl text-[#0F172A] whitespace-nowrap ml-5">
+    <a href="<?= BASE_URL ?>/index.html" class="font-newsreader font-bold text-2xl text-[#0F172A] whitespace-nowrap ml-5">
       The Editorial Scholar
     </a>
 
     <div class="hidden md:flex items-center gap-8">
-      <a href="/index.html"        class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='programs'    ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Programs</a>
-      <a href="/scholarship.php"   class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='scholarships' ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Scholarships</a>
-      <a href="/testPrep.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='testprep'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Test Prep</a>
-      <a href="/visa.html"         class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='visa'         ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Visa Guide</a>
-      <a href="/research.php"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
+      <a href="<?= BASE_URL ?>/index.html"        class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='programs'    ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Programs</a>
+      <a href="<?= BASE_URL ?>/scholarship.php"   class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='scholarships' ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Scholarships</a>
+      <a href="<?= BASE_URL ?>/testPrep.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='testprep'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Test Prep</a>
+      <a href="<?= BASE_URL ?>/visa.html"         class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='visa'         ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Visa Guide</a>
+      <a href="<?= BASE_URL ?>/research.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
     </div>
 
     <div class="flex items-center gap-4 mr-3">
       <?php if ($authPage === 'signin'): ?>
         <!-- On Sign In page: single button to switch to Sign Up -->
-        <a href="/auth/signUp.php"
+        <a href="<?= BASE_URL ?>/auth/signUp.php"
            class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
           Sign Up
         </a>
       <?php elseif ($authPage === 'signup'): ?>
         <!-- On Sign Up page: single button to switch to Sign In -->
-        <a href="/auth/signIn.php"
+        <a href="<?= BASE_URL ?>/auth/signIn.php"
            class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
           Sign In
         </a>
       <?php elseif ($isLoggedIn): ?>
         <!-- Logged-in state -->
-        <a href="/dashboard/<?= $role ?>.php"
+        <a href="<?= BASE_URL ?>/dashboard/<?= $role ?>.php"
            class="font-manrope font-medium text-sm text-[#475569] hover:text-[#0F172A] transition-colors flex items-center gap-1">
           <i class="ri-dashboard-line"></i> Dashboard
         </a>
-        <a href="/auth/logout.php"
+        <a href="<?= BASE_URL ?>/auth/logout.php"
            class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
           Sign Out
         </a>
       <?php else: ?>
-        <a href="/auth/signIn.php"
+        <a href="<?= BASE_URL ?>/auth/signIn.php"
            class="font-manrope font-medium text-sm text-[#475569] hover:text-[#0F172A] transition-colors">
           Sign In
         </a>
-        <a href="/auth/signUp.php"
+        <a href="<?= BASE_URL ?>/auth/signUp.php"
            class="btn-primary font-manrope font-medium text-sm px-5 py-2 rounded-md">
           Get Started
         </a>

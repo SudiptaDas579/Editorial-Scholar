@@ -5,6 +5,7 @@
 // that lets the UI buttons resolve to a real endpoint without 404ing.
 
 require_once __DIR__ . '/../../includes/auth_helpers.php';
+require_once __DIR__ . '/../../config/app.php';
 
 // TODO: Implement LinkedIn OAuth 2.0 flow.
 // 1. Redirect user to LinkedIn's authorization endpoint with client_id,
@@ -14,4 +15,4 @@ require_once __DIR__ . '/../../includes/auth_helpers.php';
 //    in `users` and call login_user($user).
 
 flash('info', 'Sign in with LinkedIn is coming soon. Please use your email and password for now.');
-redirect('/auth/signIn.php');
+redirect(BASE_URL . '/auth/signIn.php');

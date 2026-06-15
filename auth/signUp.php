@@ -2,9 +2,10 @@
 // auth/signUp.php — Student registration
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/app.php';
 
 if (is_logged_in()) {
-    redirect('/dashboard/' . $_SESSION['role'] . '.php');
+    redirect(BASE_URL . '/dashboard/' . $_SESSION['role'] . '.php');
 }
 
 $errors = [];
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ins->execute([$values['full_name'], $values['email'], $hash, 'user', 'active']);
 
                 flash('success', 'Account created successfully! Please sign in.');
-                redirect('/auth/signIn.php');
+                redirect(BASE_URL . '/auth/signIn.php');
             }
         }
     }
@@ -60,25 +61,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Create Account';
 $activeNav = '';
 $authPage  = 'signup';
-$cssPath   = '../src/output.css';
+$cssPath   = BASE_URL . '/src/output.css';
 ?>
 <?php include __DIR__ . '/../includes/head.php'; ?>
 
   <!-- MAIN -->
   <main class="flex-1 flex justify-center items-center px-8 pt-[80px] pb-[40px] min-h-[750px]">
-    <div class="w-full max-w-[1024px]">
+    <div class="w-full max-w-[1100px]">
 
       <?= render_flash() ?>
 
       <?php if ($errors): ?>
-        <div class="alert-error mb-4 max-w-[1024px] mx-auto">
+        <div class="alert-error mb-4 max-w-[1100px] mx-auto">
           <?php foreach ($errors as $e): ?>
             <p class="flex items-center gap-1 text-sm"><i class="ri-error-warning-line flex-shrink-0"></i><?= htmlspecialchars($e) ?></p>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
 
-      <div class="flex w-full h-[600px] min-h-[550px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] overflow-hidden rounded-xl">
+      <div class="flex w-full min-h-[600px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.2)] overflow-hidden rounded-xl">
 
         <!-- LEFT PANEL -->
         <div class="relative flex-1 min-w-0 signin-panel-bg overflow-hidden hidden md:block">
@@ -101,11 +102,11 @@ $cssPath   = '../src/output.css';
         </div>
 
         <!-- RIGHT PANEL -->
-        <div class="relative flex-1 min-w-0 bg-white flex flex-col justify-center px-14 overflow-y-auto py-8">
+        <div class="relative flex-1 min-w-0 bg-white flex flex-col justify-center px-14 overflow-y-auto py-10">
 
           <!-- Heading -->
-          <div class="flex flex-col gap-1.5 mb-7">
-            <h1 class="font-newsreader font-normal text-[34px] leading-[40px] text-[#031632]">
+          <div class="flex flex-col gap-1 mb-5">
+            <h1 class="font-newsreader font-normal text-[30px] leading-[36px] text-[#031632]">
               Create your account
             </h1>
             <p class="font-manrope font-normal text-sm leading-5 text-[#44474D]">
@@ -113,7 +114,7 @@ $cssPath   = '../src/output.css';
             </p>
           </div>
 
-          <form method="POST" action="" novalidate class="flex flex-col gap-5">
+          <form method="POST" action="" novalidate class="flex flex-col gap-4">
             <?= csrf_field() ?>
 
             <!-- Full Name -->
@@ -216,9 +217,9 @@ $cssPath   = '../src/output.css';
               <input type="checkbox" name="terms" required class="accent-[#775A19] mt-0.5 flex-shrink-0" />
               <span class="font-manrope text-sm text-[#44474D]">
                 I agree to the
-                <a href="/terms.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Terms of Service</a>
+                <a href="<?= BASE_URL ?>/terms.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Terms of Service</a>
                 and
-                <a href="/privacy.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Privacy Policy</a>
+                <a href="<?= BASE_URL ?>/privacy.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Privacy Policy</a>
               </span>
             </label>
 
@@ -242,11 +243,11 @@ $cssPath   = '../src/output.css';
 
               <!-- Social buttons -->
               <div class="flex gap-3">
-                <a href="/auth/oauth/google.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+                <a href="<?= BASE_URL ?>/auth/oauth/google.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
                   <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4" />
                   Google
                 </a>
-                <a href="/auth/oauth/linkedin.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+                <a href="<?= BASE_URL ?>/auth/oauth/linkedin.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
                   <img
                     src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg"
                     alt="LinkedIn"
@@ -260,11 +261,11 @@ $cssPath   = '../src/output.css';
               <!-- Sign in link -->
               <p class="text-center font-manrope font-normal text-sm text-[#44474D]">
                 Already have an account?
-                <a href="/auth/signIn.php" class="font-semibold text-[#775A19] hover:text-[#A16207] transition-colors">Sign In</a>
+                <a href="<?= BASE_URL ?>/auth/signIn.php" class="font-semibold text-[#775A19] hover:text-[#A16207] transition-colors">Sign In</a>
               </p>
               <p class="text-center font-manrope font-normal text-sm text-[#44474D] -mt-2">
                 Are you an education expert?
-                <a href="/auth/advisor-signup.php" class="font-semibold text-[#031632] hover:text-[#1A2B48] transition-colors">Apply as Advisor</a>
+                <a href="<?= BASE_URL ?>/auth/advisor-signup.php" class="font-semibold text-[#031632] hover:text-[#1A2B48] transition-colors">Apply as Advisor</a>
               </p>
 
             </div>
@@ -296,8 +297,8 @@ $cssPath   = '../src/output.css';
 
         <div class="flex flex-col gap-3">
           <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-          <a href="/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
-          <a href="/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="<?= BASE_URL ?>/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="<?= BASE_URL ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
           <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
         </div>
 

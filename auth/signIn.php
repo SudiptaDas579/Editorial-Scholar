@@ -2,10 +2,11 @@
 // auth/signIn.php
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../config/app.php';
 
 // Already logged in → redirect to own dashboard
 if (is_logged_in()) {
-    redirect('/dashboard/' . $_SESSION['role'] . '.php');
+    redirect(BASE_URL . '/dashboard/' . $_SESSION['role'] . '.php');
 }
 
 $errors = [];
@@ -64,9 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     unset($remember);
 
                     $dest = match ($user['role']) {
-                        'admin'   => '/dashboard/admin.php',
-                        'advisor' => '/dashboard/advisor.php',
-                        default   => '/dashboard/user.php',
+                        'admin'   => BASE_URL . '/dashboard/admin.php',
+                        'advisor' => BASE_URL . '/dashboard/advisor.php',
+                        default   => BASE_URL . '/dashboard/user.php',
                     };
                     flash('success', 'Welcome back, ' . $user['full_name'] . '!');
                     redirect($dest);
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Sign In';
 $activeNav = '';
 $authPage  = 'signin';
-$cssPath   = '../src/output.css';
+$cssPath   = BASE_URL . '/src/output.css';
 ?>
 <?php include __DIR__ . '/../includes/head.php'; ?>
 
@@ -155,7 +156,7 @@ $cssPath   = '../src/output.css';
                 <label for="password" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#75777E]">
                   Password
                 </label>
-                <a href="/auth/forgot-password.php" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#775A19] hover:text-[#A16207] transition-colors">
+                <a href="<?= BASE_URL ?>/auth/forgot-password.php" class="font-manrope font-bold text-[11px] leading-4 tracking-[1.2px] uppercase text-[#775A19] hover:text-[#A16207] transition-colors">
                   Forgot Password
                 </a>
               </div>
@@ -206,11 +207,11 @@ $cssPath   = '../src/output.css';
 
               <!-- Social buttons -->
               <div class="flex gap-3">
-                <a href="/auth/oauth/google.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+                <a href="<?= BASE_URL ?>/auth/oauth/google.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
                   <img src="https://www.google.com/favicon.ico" alt="Google" class="w-4 h-4" />
                   Google
                 </a>
-                <a href="/auth/oauth/linkedin.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
+                <a href="<?= BASE_URL ?>/auth/oauth/linkedin.php" class="flex items-center justify-center gap-2.5 flex-1 h-[41px] border border-[#C5C6CE] rounded-md font-manrope font-semibold text-sm text-[#031632] hover:bg-[#F8F9FA] transition-colors">
                   <img
                     src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/linkedin.svg"
                     alt="LinkedIn"
@@ -224,11 +225,11 @@ $cssPath   = '../src/output.css';
               <!-- Sign up link -->
               <p class="text-center font-manrope font-normal text-sm text-[#44474D]">
                 New to The Editorial Scholar?
-                <a href="/auth/signUp.php" class="font-semibold text-[#775A19] hover:text-[#A16207] transition-colors">Create an account</a>
+                <a href="<?= BASE_URL ?>/auth/signUp.php" class="font-semibold text-[#775A19] hover:text-[#A16207] transition-colors">Create an account</a>
               </p>
               <p class="text-center font-manrope font-normal text-sm text-[#44474D] -mt-2">
                 Want to join our team?
-                <a href="/auth/advisor-signup.php" class="font-semibold text-[#031632] hover:text-[#1A2B48] transition-colors">Apply as Advisor</a>
+                <a href="<?= BASE_URL ?>/auth/advisor-signup.php" class="font-semibold text-[#031632] hover:text-[#1A2B48] transition-colors">Apply as Advisor</a>
               </p>
 
             </div>
@@ -260,8 +261,8 @@ $cssPath   = '../src/output.css';
 
         <div class="flex flex-col gap-3">
           <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-          <a href="/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
-          <a href="/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="<?= BASE_URL ?>/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="<?= BASE_URL ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
           <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
         </div>
 
