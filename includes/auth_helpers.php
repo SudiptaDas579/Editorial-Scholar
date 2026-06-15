@@ -106,11 +106,39 @@ function login_user(array $user): void
 
 function logout_user(): void
 {
+    // Clear remember-me cookie if present
+    if (isset($_COOKIE['remember_token'])) {
+        // Attempt to remove the token from DB (non-fatal if it fails)
+        try {
+            require_once __DIR__ . '/../config/db.php';
+            $pdo   = getDB();
+            $token = hash('sha256', $_COOKIE['remember_token']);
+            $pdo->prepare('DELETE FROM user_sessions WHERE token = ?')->execute([$token]);
+        } catch (\Throwable $e) {
+            error_log('logout_user: could not clear remember token: ' . $e->getMessage());
+        }
+
+        setcookie('remember_token', '', [
+            'expires'  => time() - 3600,
+            'path'     => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+        ]);
+    }
+
+    // Destroy the session
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
-        setcookie(session_name(), '', time() - 42000,
-            $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+        setcookie(session_name(), '', [
+            'expires'  => time() - 42000,
+            'path'     => $p['path'],
+            'domain'   => $p['domain'],
+            'secure'   => $p['secure'],
+            'httponly' => $p['httponly'],
+            'samesite' => 'Lax',
+        ]);
     }
     session_destroy();
 }
