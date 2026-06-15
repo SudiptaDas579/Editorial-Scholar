@@ -53,7 +53,7 @@ $role       = $_SESSION['role'] ?? '';
       <a href="/scholarship.php"   class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='scholarships' ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Scholarships</a>
       <a href="/testPrep.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='testprep'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Test Prep</a>
       <a href="/visa.html"         class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='visa'         ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Visa Guide</a>
-      <a href="/research.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
+      <a href="/research.php"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
     </div>
 
     <div class="flex items-center gap-4 mr-3">
