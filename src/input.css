@@ -3,6 +3,9 @@
 /* In v4, @import replaces the old @tailwind directives */
 @import "tailwindcss";
 
+@source "../*.php";
+@source "../config/*.php";
+
 /* ─── Theme ─────────────────────────────────────────────
    In v4 all config lives here in CSS — no tailwind.config.js needed
 ─────────────────────────────────────────────────────── */
