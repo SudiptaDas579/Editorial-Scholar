@@ -178,3 +178,215 @@ CREATE TABLE IF NOT EXISTS test_prep_consultations (
     INDEX idx_status (status),
     FOREIGN KEY fk_con_user (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+-- =====================================================
+-- VISA APPLICATIONS
+-- =====================================================
+
+CREATE TABLE visa_applications (
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+```
+application_code VARCHAR(30) UNIQUE NOT NULL,
+
+user_id INT UNSIGNED NULL,
+
+full_name VARCHAR(150) NOT NULL,
+email VARCHAR(255) NOT NULL,
+phone VARCHAR(50) NOT NULL,
+
+dob DATE,
+gender ENUM('Male','Female','Other'),
+
+nationality VARCHAR(100) NOT NULL,
+
+passport_number VARCHAR(100) NOT NULL,
+passport_expiry DATE NOT NULL,
+
+degree VARCHAR(150),
+institution VARCHAR(255),
+cgpa VARCHAR(20),
+passing_year YEAR,
+
+destination_country VARCHAR(100) NOT NULL,
+university_name VARCHAR(255) NOT NULL,
+course_name VARCHAR(255) NOT NULL,
+intake VARCHAR(100) NOT NULL,
+
+sponsor_name VARCHAR(150),
+sponsor_relation VARCHAR(100),
+
+bank_balance DECIMAL(15,2) DEFAULT 0,
+
+ielts_score DECIMAL(4,2) DEFAULT 0,
+
+visa_status ENUM(
+    'submitted',
+    'documents_pending',
+    'under_review',
+    'interview',
+    'processing',
+    'approved',
+    'rejected'
+) DEFAULT 'submitted',
+
+admin_notes TEXT,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+CONSTRAINT fk_visa_user
+FOREIGN KEY(user_id)
+REFERENCES users(id)
+ON DELETE SET NULL
+```
+
+);
+
+-- =====================================================
+-- DOCUMENTS
+-- =====================================================
+
+CREATE TABLE visa_documents (
+
+```
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+application_id INT NOT NULL,
+
+document_type ENUM(
+    'passport',
+    'photo',
+    'transcript',
+    'certificate',
+    'bank_statement',
+    'offer_letter',
+    'sop',
+    'ielts'
+) NOT NULL,
+
+original_name VARCHAR(255) NOT NULL,
+stored_name VARCHAR(255) NOT NULL,
+
+file_path VARCHAR(500) NOT NULL,
+
+uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY(application_id)
+REFERENCES visa_applications(id)
+ON DELETE CASCADE
+```
+
+);
+
+-- =====================================================
+-- STATUS HISTORY
+-- =====================================================
+
+CREATE TABLE visa_status_history (
+
+```
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+application_id INT NOT NULL,
+
+status_name VARCHAR(100) NOT NULL,
+
+remarks TEXT,
+
+changed_by INT UNSIGNED NULL,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY(application_id)
+REFERENCES visa_applications(id)
+ON DELETE CASCADE,
+
+FOREIGN KEY(changed_by)
+REFERENCES users(id)
+ON DELETE SET NULL
+```
+
+);
+
+-- =====================================================
+-- AUDIT REQUESTS
+-- =====================================================
+
+CREATE TABLE visa_audit_requests (
+
+```
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+application_id INT NOT NULL,
+
+issue_type VARCHAR(150) NOT NULL,
+
+description TEXT NOT NULL,
+
+priority ENUM(
+    'low',
+    'medium',
+    'high'
+) DEFAULT 'medium',
+
+status ENUM(
+    'open',
+    'reviewing',
+    'resolved',
+    'closed'
+) DEFAULT 'open',
+
+admin_reply TEXT,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY(application_id)
+REFERENCES visa_applications(id)
+ON DELETE CASCADE
+```
+
+);
+
+-- =====================================================
+-- FAQ
+-- =====================================================
+
+CREATE TABLE visa_faq (
+
+```
+id INT AUTO_INCREMENT PRIMARY KEY,
+
+question VARCHAR(500) NOT NULL,
+
+answer TEXT NOT NULL,
+
+display_order INT DEFAULT 0,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
+);
+
+INSERT INTO visa_faq(question,answer,display_order)
+VALUES
+
+('How long does visa processing take?',
+'Usually between 2 and 12 weeks depending on destination country.',
+1),
+
+('Can I upload documents later?',
+'Yes, documents can be uploaded after application submission.',
+2),
+
+('Can I track my application?',
+'Yes, every application receives a unique tracking code.',
+3),
+
+('Can I request document audit?',
+'Yes, audit requests can be submitted from the visa portal.',
+4);
