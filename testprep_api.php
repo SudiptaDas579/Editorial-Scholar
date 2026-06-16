@@ -1,6 +1,6 @@
 <?php
 /**
- * tesrprep_api.php  — Test Prep JSON API
+ * testprep_api.php  — Test Prep JSON API
  * ─────────────────────────────────────────────────────────────────────────────
  * Handles all AJAX actions from testPrep.php:
  *   bookmark         — add / remove a resource bookmark

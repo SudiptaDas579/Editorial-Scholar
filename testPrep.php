@@ -139,210 +139,6 @@ $cssPath = BASE_URL . '/src/output.css';
   <link rel="stylesheet" href="<?= $cssPath ?>">
   <link rel="stylesheet" href="<?= BASE_URL ?>/testPrep.css">
 
-  <style>
-    /* ── Materials Panel ───────────────────────────────── */
-    .materials-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(3,22,50,0.55);
-      align-items: flex-start; justify-content: flex-end;
-    }
-    .materials-overlay.open { display: flex; }
-    .materials-drawer {
-      background: #fff;
-      width: 100%; max-width: 520px;
-      height: 100vh; overflow-y: auto;
-      display: flex; flex-direction: column;
-      box-shadow: -8px 0 40px rgba(3,22,50,0.18);
-      animation: drawer-in 0.28s ease;
-    }
-    @keyframes drawer-in {
-      from { transform: translateX(60px); opacity: 0; }
-      to   { transform: translateX(0);    opacity: 1; }
-    }
-    .drawer-head {
-      padding: 1.5rem 2rem 1.25rem;
-      border-bottom: 1px solid #E2E8F0;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 1rem;
-      position: sticky; top: 0; background: #fff; z-index: 2;
-    }
-    .drawer-exam-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.6px;
-      text-transform: uppercase; color: var(--color-gold);
-      padding: 0.3rem 0.75rem; border: 1px solid rgba(119,90,25,0.3);
-      border-radius: 2px;
-    }
-    .drawer-title {
-      font-family: var(--font-newsreader);
-      font-weight: 700; font-size: 1.3rem; color: var(--color-navy);
-      margin-top: 0.5rem;
-    }
-    .drawer-progress-bar {
-      height: 4px; width: 100%;
-      background: #E2E8F0; border-radius: 9999px; overflow: hidden;
-      margin-top: 0.75rem;
-    }
-    .drawer-progress-fill {
-      height: 100%; border-radius: 9999px;
-      background: linear-gradient(90deg, #775A19, #A16207);
-      transition: width 0.5s ease;
-    }
-    .drawer-progress-label {
-      display: flex; justify-content: space-between;
-      font-size: 0.72rem; color: var(--color-muted);
-      margin-top: 0.35rem;
-    }
-    .drawer-close {
-      background: none; border: none;
-      font-size: 1.5rem; color: var(--color-muted);
-      cursor: pointer; transition: color 0.15s; flex-shrink: 0;
-    }
-    .drawer-close:hover { color: var(--color-navy); }
-
-    /* Tabs */
-    .drawer-tabs {
-      display: flex; border-bottom: 1px solid #E2E8F0;
-      padding: 0 1.5rem; gap: 0; flex-shrink: 0;
-    }
-    .drawer-tab {
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
-      text-transform: uppercase; color: var(--color-muted);
-      border: none; background: none; cursor: pointer;
-      border-bottom: 2px solid transparent; margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-      white-space: nowrap;
-    }
-    .drawer-tab.active {
-      color: var(--color-navy);
-      border-bottom-color: var(--color-gold);
-    }
-    .drawer-tab-panel { display: none; padding: 1.5rem; flex-direction: column; gap: 0.75rem; }
-    .drawer-tab-panel.active { display: flex; }
-
-    /* Material rows */
-    .material-row {
-      display: flex; align-items: center; gap: 1rem;
-      padding: 1rem 1.25rem;
-      border: 1px solid rgba(197,198,206,0.45);
-      border-radius: 6px; background: #fff;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      position: relative;
-    }
-    .material-row.completed { background: #F0FDF4; border-color: rgba(5,150,105,0.25); }
-    .material-row:hover {
-      border-color: rgba(119,90,25,0.35);
-      box-shadow: 0 2px 12px rgba(3,22,50,0.06);
-    }
-    .material-icon-wrap {
-      flex-shrink: 0; width: 2.75rem; height: 2.75rem;
-      background: #EEF0F2; border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; color: var(--color-gold);
-    }
-    .material-info { flex: 1; min-width: 0; }
-    .material-title {
-      font-size: 0.88rem; font-weight: 700; color: var(--color-navy);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .material-meta { font-size: 0.7rem; color: var(--color-muted); margin-top: 3px; }
-    .material-section-tag {
-      display: inline-block; font-size: 0.6rem; font-weight: 700;
-      letter-spacing: 0.5px; text-transform: uppercase;
-      background: #EEF2F8; color: var(--color-navy-2);
-      padding: 0.15rem 0.5rem; border-radius: 2px; margin-top: 4px;
-    }
-    .material-actions { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
-    .btn-complete {
-      display: flex; align-items: center; gap: 0.35rem;
-      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;
-      padding: 0.3rem 0.75rem; border-radius: 3px; border: 1px solid;
-      cursor: pointer; transition: all 0.2s; white-space: nowrap;
-    }
-    .btn-complete.not-done {
-      background: transparent; color: var(--color-navy);
-      border-color: var(--color-navy);
-    }
-    .btn-complete.not-done:hover { background: var(--color-navy); color: #fff; }
-    .btn-complete.done {
-      background: #166534; color: #fff; border-color: #166534;
-    }
-    .material-download-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--color-muted); font-size: 1rem;
-      transition: color 0.15s;
-    }
-    .material-download-btn:hover { color: var(--color-navy); }
-    .materials-loading {
-      text-align: center; padding: 2.5rem 1rem;
-      color: var(--color-muted); font-size: 0.85rem;
-    }
-    .materials-loading i { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.4; }
-
-    /* Filter bar */
-    .drawer-filters {
-      display: flex; gap: 0.5rem; padding: 1rem 1.5rem 0;
-      flex-wrap: wrap; flex-shrink: 0;
-    }
-    .filter-chip {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.4px;
-      padding: 0.3rem 0.75rem; border-radius: 999px;
-      border: 1px solid #D1D5DB; background: #fff; color: #6B7280;
-      cursor: pointer; transition: all 0.15s;
-    }
-    .filter-chip.active { background: var(--color-navy); color: #fff; border-color: var(--color-navy); }
-
-    /* Materials pagination */
-    .drawer-pagination {
-      display: flex; align-items: center; gap: 0.5rem;
-      justify-content: center; padding: 1rem 0 0.5rem;
-      flex-shrink: 0;
-    }
-    .page-btn {
-      width: 30px; height: 30px; border-radius: 4px;
-      border: 1px solid #D1D5DB; background: #fff;
-      font-size: 0.75rem; font-weight: 700; color: #374151;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-    }
-    .page-btn.active { background: var(--color-navy); color: #fff; border-color: var(--color-navy); }
-    .page-btn:hover:not(.active) { border-color: var(--color-gold); color: var(--color-gold); }
-
-    /* Score summary in drawer */
-    .exam-score-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 0.75rem; margin-bottom: 1rem;
-    }
-    .exam-score-card {
-      background: #F8FAFC; border: 1px solid #E2E8F0;
-      border-radius: 6px; padding: 0.9rem 1rem;
-    }
-    .exam-score-val {
-      font-family: var(--font-newsreader);
-      font-size: 1.2rem; font-weight: 700; color: var(--color-navy);
-    }
-    .exam-score-lbl {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--color-muted); margin-top: 2px;
-    }
-
-    /* Exam card open state */
-    .exam-card.panel-open {
-      border: 2px solid var(--color-gold);
-      box-shadow: 0 0 0 3px rgba(119,90,25,0.12);
-    }
-
-    /* Auth gate inline */
-    .auth-gate-inline {
-      text-align: center; padding: 2rem 1rem;
-      background: rgba(3,22,50,0.04); border: 1px dashed #CBD5E1;
-      border-radius: 6px;
-      font-size: 0.82rem; color: var(--color-muted);
-    }
-    .auth-gate-inline a { color: var(--color-gold-lt); font-weight: 600; }
-  </style>
 </head>
 <body>
 
@@ -353,10 +149,10 @@ $cssPath = BASE_URL . '/src/output.css';
   <div class="nav-inner">
     <span class="nav-logo">The Editorial Scholar</span>
     <div class="nav-links">
-      <a href="<?= BASE_URL ?>/index.html">Programs</a>
+      <a href="<?= BASE_URL ?>/index.php">Programs</a>
       <a href="<?= BASE_URL ?>/scholarship.php">Scholarships</a>
       <a href="<?= BASE_URL ?>/testPrep.php" class="active">Test Prep</a>
-      <a href="<?= BASE_URL ?>/visa.html">Visa Guide</a>
+      <a href="<?= BASE_URL ?>/visa.php">Visa Guide</a>
       <a href="<?= BASE_URL ?>/research.php">Research</a>
     </div>
     <div class="nav-right">
@@ -782,7 +578,7 @@ $cssPath = BASE_URL . '/src/output.css';
 <script>
 const BASE      = '<?= BASE_URL ?>';
 const LOGGED_IN = <?= $isLoggedIn ? 'true' : 'false' ?>;
-const API       = BASE + '/tesrprep_api.php';
+const API       = BASE + '/testprep_api.php';
 
 // PHP-side data injected for immediate use
 const INIT_PROGRESS  = <?= json_encode($progress) ?>;

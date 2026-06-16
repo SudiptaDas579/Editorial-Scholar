@@ -232,10 +232,10 @@ try {
     <header class="navbar">
         <div class="logo">The Editorial Scholar</div>
         <nav class="nav-links">
-            <a href="index.html">Programs</a>
+            <a href="index.php">Programs</a>
             <a href="scholarship.php">Scholarships</a>
-            <a href="testPrep.html">Test Prep</a>
-            <a href="visa.html">Visa Guide</a>
+            <a href="testPrep.php">Test Prep</a>
+            <a href="visa.php">Visa Guide</a>
             <a class="active" href="research.php">Research</a>
         </nav>
         <div style="display: flex; gap: 10px; align-items: center;">

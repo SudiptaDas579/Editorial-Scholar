@@ -556,10 +556,10 @@ function selected_attr(string $actual, string $expected): string
         The Editorial Scholar
       </span>
       <div class="hidden md:flex items-center gap-8">
-        <a href="index.html" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] pb-1">Programs</a>
+        <a href="index.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] pb-1">Programs</a>
         <a href="scholarship.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#A16207] hover:text-[#0F172A] transition-colors border-b-2 border-[#A16207]">Scholarships</a>
-        <a href="testPrep.html" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Test Prep</a>
-        <a href="visa.html" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Visa Guide</a>
+        <a href="testPrep.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Test Prep</a>
+        <a href="visa.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Visa Guide</a>
         <a href="research.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Research</a>
       </div>
       <a href="index.html" class="font-newsreader font-semibold text-sm tracking-[0.35px] text-[#031632]">

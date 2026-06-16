@@ -117,68 +117,6 @@ UPDATE users
 SET password_hash = '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.ucrIuRssi'
 WHERE email = 'admin@editorialscholar.com';
 
-
--- ─────────────────────────────────────────────────────
---  Test Prep Tables Migration
---  Add to your database.sql or run separately.
--- ─────────────────────────────────────────────────────
-
--- Resource Bookmarks
-CREATE TABLE IF NOT EXISTS test_prep_bookmarks (
-    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_id     INT UNSIGNED NOT NULL,
-    resource_id INT UNSIGNED NOT NULL,
-    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY uq_user_resource (user_id, resource_id),
-    INDEX idx_user (user_id),
-    FOREIGN KEY fk_bm_user (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Download Log
-CREATE TABLE IF NOT EXISTS test_prep_downloads (
-    id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_id       INT UNSIGNED NOT NULL,
-    resource_id   INT UNSIGNED NOT NULL,
-    downloaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    INDEX idx_user (user_id),
-    INDEX idx_resource (resource_id),
-    FOREIGN KEY fk_dl_user (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Exam Progress Tracker
-CREATE TABLE IF NOT EXISTS test_prep_progress (
-    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_id      INT UNSIGNED NOT NULL,
-    exam_key     VARCHAR(20)  NOT NULL,   -- 'ielts' | 'gre' | 'toefl'
-    progress_pct TINYINT UNSIGNED NOT NULL DEFAULT 0,  -- 0–100
-    last_module  VARCHAR(200) NULL,       -- name of last completed module
-    updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY uq_user_exam (user_id, exam_key),
-    INDEX idx_user (user_id),
-    FOREIGN KEY fk_prog_user (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Advisor Consultation Bookings
-CREATE TABLE IF NOT EXISTS test_prep_consultations (
-    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_id      INT UNSIGNED NOT NULL,
-    full_name    VARCHAR(150) NOT NULL,
-    exam_target  VARCHAR(50)  NOT NULL,   -- 'IELTS' | 'GRE' | 'TOEFL' | 'Multiple / Unsure'
-    consult_date DATE         NOT NULL,
-    consult_time VARCHAR(20)  NOT NULL,   -- e.g. '10:00 AM'
-    notes        TEXT         NULL,
-    status       ENUM('pending','confirmed','cancelled') NOT NULL DEFAULT 'pending',
-    created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    INDEX idx_user (user_id),
-    INDEX idx_date (consult_date),
-    INDEX idx_status (status),
-    FOREIGN KEY fk_con_user (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- ═════════════════════════════════════════════════════════════════════════════
 --  The Editorial Scholar — Test Prep SQL Migration
 --  Run AFTER the base database.sql schema has been applied.
@@ -243,48 +181,52 @@ CREATE TABLE IF NOT EXISTS test_prep_materials (
 
 -- ═════════════════════════════════════════════════════════════════════════════
 --  SEED: 31 materials across IELTS (12), GRE (10), TOEFL (9)
+--  NOTE: written as individual INSERT IGNORE statements (not one multi-row
+--  VALUES list) on purpose. A single multi-row INSERT fails (and rolls back
+--  the whole statement) if even one row has a problem — e.g. a stray
+--  non-ASCII character (•, –) being mis-encoded by a client that isn't
+--  sending utf8mb4, or a bad NULL literal. Splitting into one statement per
+--  row means a bad row fails by itself and everything else still loads.
+--  All separator characters below are plain ASCII (-, |) instead of bullets
+--  or en-dashes for the same reason.
 -- ═════════════════════════════════════════════════════════════════════════════
-INSERT IGNORE INTO test_prep_materials
-    (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order)
-VALUES
--- ── IELTS (12 modules) ──────────────────────────────────────────────────────
-('ielts', 'ielts-intro',            'IELTS Overview & Exam Format',                'video',       'ri-play-circle-line',  'Video • 18 min • All Levels',               'Overview',  'All Levels',   18, '#', 1),
-('ielts', 'ielts-listening-1',      'Listening Section 1 – Form Completion',       'audio',       'ri-headphone-line',    'Audio Practice • 22:45 • Beginner',          'Listening', 'Beginner',     23, '#', 2),
-('ielts', 'ielts-listening-2',      'Listening Section 3 & 4 – Academic Drills',   'audio',       'ri-headphone-line',    'Audio Practice • 30 min • Advanced',         'Listening', 'Advanced',     30, '#', 3),
-('ielts', 'ielts-reading-skills',   'Reading Skimming & Scanning Masterclass',     'video',       'ri-video-line',        'Video Lecture • 24 min • Intermediate',      'Reading',   'Intermediate', 24, '#', 4),
-('ielts', 'ielts-reading-tfng',     'True / False / Not Given Strategy',           'article',     'ri-article-line',      'Interactive Article • 10 min read',          'Reading',   'Intermediate', 10, '#', 5),
-('ielts', 'ielts-writing-task1',    'Writing Task 1 – Graph & Chart Templates',    'pdf',         'ri-file-pdf-line',     'PDF Document • 3.8 MB • Intermediate',       'Writing',   'Intermediate', null,'#', 6),
-('ielts', 'ielts-writing-task2',    'Writing Task 2 – Band 9 Sample Essays',       'article',     'ri-article-line',      'Interactive Article • 8 min read',           'Writing',   'Advanced',      8, '#', 7),
-('ielts', 'ielts-writing-coherence','Coherence & Cohesion Scoring Breakdown',      'video',       'ri-video-line',        'Video Lecture • 16 min • All Levels',        'Writing',   'All Levels',   16, '#', 8),
-('ielts', 'ielts-speaking-parts',   'Speaking Parts 1–3 Full Walkthrough',         'video',       'ri-video-line',        'Video Lecture • 28 min • Intermediate',      'Speaking',  'Intermediate', 28, '#', 9),
-('ielts', 'ielts-speaking-fluency', 'Fluency & Pronunciation: Band Descriptors',   'article',     'ri-article-line',      'Article • 6 min read • All Levels',          'Speaking',  'All Levels',    6, '#', 10),
-('ielts', 'ielts-vocab-academic',   'Academic Vocabulary for IELTS Band 7+',       'pdf',         'ri-file-pdf-line',     'PDF Wordlist • 2.1 MB • Advanced',           'Vocabulary','Advanced',     null,'#', 11),
-('ielts', 'ielts-full-mock',        'Full IELTS Mock Test (Academic) with Answer Key','quiz',     'ri-questionnaire-line','Mock Exam • 2 hrs 45 min • All Levels',       'Mock Test', 'All Levels',  165, '#', 12),
 
--- ── GRE (10 modules) ────────────────────────────────────────────────────────
-('gre', 'gre-intro',                'GRE General Test Overview',                   'video',       'ri-play-circle-line',  'Video • 14 min • All Levels',                'Overview',       'All Levels',  14, '#', 1),
-('gre', 'gre-verbal-vocab',         'GRE Vocabulary: High-Frequency Words 500+',   'pdf',         'ri-file-pdf-line',     'PDF Flashcards • 5.1 MB • All Levels',       'Verbal',         'All Levels', null,'#', 2),
-('gre', 'gre-verbal-reading',       'Critical Reading: Argument Structure',         'article',     'ri-article-line',      'Article • 12 min read • Intermediate',       'Verbal',         'Intermediate',12, '#', 3),
-('gre', 'gre-verbal-equivalence',   'Text Completion & Sentence Equivalence',       'interactive', 'ri-drag-move-2-line',  'Interactive Drill • 45 questions',           'Verbal',         'Intermediate',null,'#', 4),
-('gre', 'gre-quant-strategy',       'GRE Quantitative Strategy Guide',              'pdf',         'ri-file-pdf-line',     'PDF Document • 4.2 MB • Advanced',           'Quantitative',   'Advanced',   null,'#', 5),
-('gre', 'gre-quant-algebra',        'Algebra & Number Properties Deep Dive',        'video',       'ri-video-line',        'Video Lecture • 35 min • Intermediate',      'Quantitative',   'Intermediate',35, '#', 6),
-('gre', 'gre-quant-geometry',       'Geometry & Data Analysis Crash Course',        'video',       'ri-video-line',        'Video Lecture • 29 min • Intermediate',      'Quantitative',   'Intermediate',29, '#', 7),
-('gre', 'gre-aw-issue',             'Analytical Writing: Issue Task Templates',     'article',     'ri-article-line',      'Article + Samples • 15 min • Advanced',      'Analytical Writing','Advanced', 15, '#', 8),
-('gre', 'gre-aw-argument',          'Argument Task: Finding Logical Flaws',         'video',       'ri-video-line',        'Video Lecture • 22 min • Advanced',          'Analytical Writing','Advanced', 22, '#', 9),
-('gre', 'gre-full-mock',            'GRE Full-Length Adaptive Mock Test',           'quiz',        'ri-questionnaire-line','Mock Exam • 1 hr 58 min • All Levels',       'Mock Test',      'All Levels', 118, '#', 10),
+-- ── IELTS (12 modules) ────────────────────────────────────────────────────
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-intro', 'IELTS Overview and Exam Format', 'video', 'ri-play-circle-line', 'Video - 18 min - All Levels', 'Overview', 'All Levels', 18, '#', 1);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-listening-1', 'Listening Section 1 - Form Completion', 'audio', 'ri-headphone-line', 'Audio Practice - 22:45 - Beginner', 'Listening', 'Beginner', 23, '#', 2);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-listening-2', 'Listening Section 3 and 4 - Academic Drills', 'audio', 'ri-headphone-line', 'Audio Practice - 30 min - Advanced', 'Listening', 'Advanced', 30, '#', 3);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-reading-skills', 'Reading Skimming and Scanning Masterclass', 'video', 'ri-video-line', 'Video Lecture - 24 min - Intermediate', 'Reading', 'Intermediate', 24, '#', 4);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-reading-tfng', 'True / False / Not Given Strategy', 'article', 'ri-article-line', 'Interactive Article - 10 min read', 'Reading', 'Intermediate', 10, '#', 5);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-writing-task1', 'Writing Task 1 - Graph and Chart Templates', 'pdf', 'ri-file-pdf-line', 'PDF Document - 3.8 MB - Intermediate', 'Writing', 'Intermediate', NULL, '#', 6);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-writing-task2', 'Writing Task 2 - Band 9 Sample Essays', 'article', 'ri-article-line', 'Interactive Article - 8 min read', 'Writing', 'Advanced', 8, '#', 7);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-writing-coherence', 'Coherence and Cohesion Scoring Breakdown', 'video', 'ri-video-line', 'Video Lecture - 16 min - All Levels', 'Writing', 'All Levels', 16, '#', 8);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-speaking-parts', 'Speaking Parts 1-3 Full Walkthrough', 'video', 'ri-video-line', 'Video Lecture - 28 min - Intermediate', 'Speaking', 'Intermediate', 28, '#', 9);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-speaking-fluency', 'Fluency and Pronunciation: Band Descriptors', 'article', 'ri-article-line', 'Article - 6 min read - All Levels', 'Speaking', 'All Levels', 6, '#', 10);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-vocab-academic', 'Academic Vocabulary for IELTS Band 7+', 'pdf', 'ri-file-pdf-line', 'PDF Wordlist - 2.1 MB - Advanced', 'Vocabulary', 'Advanced', NULL, '#', 11);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('ielts', 'ielts-full-mock', 'Full IELTS Mock Test (Academic) with Answer Key', 'quiz', 'ri-questionnaire-line', 'Mock Exam - 2 hrs 45 min - All Levels', 'Mock Test', 'All Levels', 165, '#', 12);
 
--- ── TOEFL (9 modules) ───────────────────────────────────────────────────────
-('toefl', 'toefl-intro',            'TOEFL iBT Format & Scoring Guide',             'video',       'ri-play-circle-line',  'Video • 12 min • All Levels',                'Overview',  'All Levels',   12, '#', 1),
-('toefl', 'toefl-reading-strategy', 'Reading Passage Strategy: Inference & Detail', 'article',     'ri-article-line',      'Article • 9 min read • Intermediate',        'Reading',   'Intermediate',  9, '#', 2),
-('toefl', 'toefl-listening-notes',  'Listening: Note-Taking Techniques',            'audio',       'ri-headphone-line',    'Audio + Notes • 25 min • All Levels',        'Listening', 'All Levels',   25, '#', 3),
-('toefl', 'toefl-speaking-t1',      'Speaking Task 1: Independent Response Method', 'video',       'ri-video-line',        'TOEFL Speaking • 14:20 • Instructional',     'Speaking',  'Intermediate', 14, '#', 4),
-('toefl', 'toefl-speaking-t2t4',    'Speaking Tasks 2–4: Integrated Strategies',    'video',       'ri-video-line',        'Video Lecture • 32 min • Advanced',          'Speaking',  'Advanced',     32, '#', 5),
-('toefl', 'toefl-writing-integrated','Integrated Writing Task: Read + Listen + Write','article',   'ri-article-line',      'Interactive Article • 11 min • Advanced',    'Writing',   'Advanced',     11, '#', 6),
-('toefl', 'toefl-writing-academic', 'Academic Discussion Task: Scoring Rubric',     'pdf',         'ri-file-pdf-line',     'PDF Rubric & Samples • 2.4 MB • Advanced',   'Writing',   'Advanced',    null,'#', 7),
-('toefl', 'toefl-vocab-academic',   'Academic Word List for TOEFL 100+',            'pdf',         'ri-file-pdf-line',     'PDF Wordlist • 1.9 MB • Intermediate',       'Vocabulary','Intermediate', null,'#', 8),
-('toefl', 'toefl-full-mock',        'TOEFL iBT Full Practice Test',                 'quiz',        'ri-questionnaire-line','Mock Exam • ~2 hrs • All Levels',            'Mock Test', 'All Levels',  120, '#', 9);
+-- ── GRE (10 modules) ──────────────────────────────────────────────────────
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-intro', 'GRE General Test Overview', 'video', 'ri-play-circle-line', 'Video - 14 min - All Levels', 'Overview', 'All Levels', 14, '#', 1);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-verbal-vocab', 'GRE Vocabulary: High-Frequency Words 500+', 'pdf', 'ri-file-pdf-line', 'PDF Flashcards - 5.1 MB - All Levels', 'Verbal', 'All Levels', NULL, '#', 2);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-verbal-reading', 'Critical Reading: Argument Structure', 'article', 'ri-article-line', 'Article - 12 min read - Intermediate', 'Verbal', 'Intermediate', 12, '#', 3);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-verbal-equivalence', 'Text Completion and Sentence Equivalence', 'interactive', 'ri-drag-move-2-line', 'Interactive Drill - 45 questions', 'Verbal', 'Intermediate', NULL, '#', 4);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-quant-strategy', 'GRE Quantitative Strategy Guide', 'pdf', 'ri-file-pdf-line', 'PDF Document - 4.2 MB - Advanced', 'Quantitative', 'Advanced', NULL, '#', 5);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-quant-algebra', 'Algebra and Number Properties Deep Dive', 'video', 'ri-video-line', 'Video Lecture - 35 min - Intermediate', 'Quantitative', 'Intermediate', 35, '#', 6);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-quant-geometry', 'Geometry and Data Analysis Crash Course', 'video', 'ri-video-line', 'Video Lecture - 29 min - Intermediate', 'Quantitative', 'Intermediate', 29, '#', 7);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-aw-issue', 'Analytical Writing: Issue Task Templates', 'article', 'ri-article-line', 'Article + Samples - 15 min - Advanced', 'Analytical Writing', 'Advanced', 15, '#', 8);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-aw-argument', 'Argument Task: Finding Logical Flaws', 'video', 'ri-video-line', 'Video Lecture - 22 min - Advanced', 'Analytical Writing', 'Advanced', 22, '#', 9);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('gre', 'gre-full-mock', 'GRE Full-Length Adaptive Mock Test', 'quiz', 'ri-questionnaire-line', 'Mock Exam - 1 hr 58 min - All Levels', 'Mock Test', 'All Levels', 118, '#', 10);
 
-
+-- ── TOEFL (9 modules) ─────────────────────────────────────────────────────
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-intro', 'TOEFL iBT Format and Scoring Guide', 'video', 'ri-play-circle-line', 'Video - 12 min - All Levels', 'Overview', 'All Levels', 12, '#', 1);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-reading-strategy', 'Reading Passage Strategy: Inference and Detail', 'article', 'ri-article-line', 'Article - 9 min read - Intermediate', 'Reading', 'Intermediate', 9, '#', 2);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-listening-notes', 'Listening: Note-Taking Techniques', 'audio', 'ri-headphone-line', 'Audio + Notes - 25 min - All Levels', 'Listening', 'All Levels', 25, '#', 3);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-speaking-t1', 'Speaking Task 1: Independent Response Method', 'video', 'ri-video-line', 'TOEFL Speaking - 14:20 - Instructional', 'Speaking', 'Intermediate', 14, '#', 4);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-speaking-t2t4', 'Speaking Tasks 2-4: Integrated Strategies', 'video', 'ri-video-line', 'Video Lecture - 32 min - Advanced', 'Speaking', 'Advanced', 32, '#', 5);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-writing-integrated', 'Integrated Writing Task: Read + Listen + Write', 'article', 'ri-article-line', 'Interactive Article - 11 min - Advanced', 'Writing', 'Advanced', 11, '#', 6);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-writing-academic', 'Academic Discussion Task: Scoring Rubric', 'pdf', 'ri-file-pdf-line', 'PDF Rubric and Samples - 2.4 MB - Advanced', 'Writing', 'Advanced', NULL, '#', 7);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-vocab-academic', 'Academic Word List for TOEFL 100+', 'pdf', 'ri-file-pdf-line', 'PDF Wordlist - 1.9 MB - Intermediate', 'Vocabulary', 'Intermediate', NULL, '#', 8);
+INSERT IGNORE INTO test_prep_materials (exam_key, module_slug, title, material_type, icon, meta, section_tag, level, duration_min, file_url, sort_order) VALUES ('toefl', 'toefl-full-mock', 'TOEFL iBT Full Practice Test', 'quiz', 'ri-questionnaire-line', 'Mock Exam - approx 2 hrs - All Levels', 'Mock Test', 'All Levels', 120, '#', 9);
 -- =====================================================
 --  VISA MODULE — Full Schema
 --  Drop order respects FK dependencies
