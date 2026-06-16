@@ -1,8 +1,7 @@
 <?php
-// ─────────────────────────────────────────────────────
-//  testPrep.php  — Test Preparation Hub
-//  Replaces the static testPrep.html
-// ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  testPrep.php  — Test Preparation Hub  (complete rebuild)
+// ─────────────────────────────────────────────────────────────────────────────
 session_start();
 require_once __DIR__ . '/includes/auth_helpers.php';
 require_once __DIR__ . '/config/db.php';
@@ -12,7 +11,7 @@ $isLoggedIn = is_logged_in();
 $userId     = $isLoggedIn ? (int)$_SESSION['user_id'] : 0;
 $userName   = $isLoggedIn ? htmlspecialchars($_SESSION['full_name'] ?? '') : '';
 
-// ── STATIC EXAM DEFINITIONS ──────────────────────────
+// ── STATIC EXAM DEFINITIONS ──────────────────────────────────────────────────
 $exams = [
     'ielts' => [
         'label'    => 'Academic &amp; General',
@@ -27,6 +26,7 @@ $exams = [
         'validity' => '2 years',
         'sections' => ['Listening','Reading','Writing','Speaking'],
         'modules'  => 12,
+        'color'    => '#2563EB',
         'reg_url'  => 'https://www.ielts.org/book-a-test',
     ],
     'gre' => [
@@ -42,6 +42,7 @@ $exams = [
         'validity' => '5 years',
         'sections' => ['Verbal','Quantitative','Analytical Writing'],
         'modules'  => 10,
+        'color'    => '#7C3AED',
         'reg_url'  => 'https://www.ets.org/gre/test-takers/general-test/register.html',
     ],
     'toefl' => [
@@ -57,39 +58,38 @@ $exams = [
         'validity' => '2 years',
         'sections' => ['Reading','Listening','Speaking','Writing'],
         'modules'  => 9,
+        'color'    => '#059669',
         'reg_url'  => 'https://www.ets.org/toefl/test-takers/ibt/register.html',
     ],
 ];
 
-// ── STATIC RESOURCE LIBRARY ──────────────────────────
+// ── STATIC RESOURCE LIBRARY ──────────────────────────────────────────────────
 $resources = [
-    ['id'=>1,'icon'=>'ri-file-pdf-line',  'title'=>'GRE Quantitative Strategy Guide 2024', 'meta'=>'PDF Document • 4.2 MB • Advanced Level',   'file'=>'#'],
-    ['id'=>2,'icon'=>'ri-video-line',      'title'=>'TOEFL Speaking: The 4-Template Method',  'meta'=>'Video Lecture • 14:20 • Instructional',       'file'=>'#'],
-    ['id'=>3,'icon'=>'ri-article-line',    'title'=>'IELTS Writing Task 2: Band 9 Samples',  'meta'=>'Interactive Article • 8 min read',            'file'=>'#'],
-    ['id'=>4,'icon'=>'ri-headphone-line',  'title'=>'IELTS Listening — Academic Section 3 Drill','meta'=>'Audio Practice • 22:45 • Intermediate Level','file'=>'#'],
+    ['id'=>1,'icon'=>'ri-file-pdf-line',  'title'=>'GRE Quantitative Strategy Guide 2024', 'meta'=>'PDF Document • 4.2 MB • Advanced Level',       'file'=>'#', 'exam'=>'gre'],
+    ['id'=>2,'icon'=>'ri-video-line',      'title'=>'TOEFL Speaking: The 4-Template Method',  'meta'=>'Video Lecture • 14:20 • Instructional',           'file'=>'#', 'exam'=>'toefl'],
+    ['id'=>3,'icon'=>'ri-article-line',    'title'=>'IELTS Writing Task 2: Band 9 Samples',  'meta'=>'Interactive Article • 8 min read',                'file'=>'#', 'exam'=>'ielts'],
+    ['id'=>4,'icon'=>'ri-headphone-line',  'title'=>'IELTS Listening — Section 3 Drill',     'meta'=>'Audio Practice • 22:45 • Intermediate Level',     'file'=>'#', 'exam'=>'ielts'],
 ];
 
-// ── UPCOMING MOCK SESSIONS ───────────────────────────
+// ── UPCOMING MOCK SESSIONS ────────────────────────────────────────────────────
 $mocks = [
-    ['id'=>1,'month'=>'Aug','day'=>'8',  'title'=>'IELTS Full Mock Test',     'duration'=>'3 hrs','scope'=>'All sections',  'past'=>false],
-    ['id'=>2,'month'=>'Aug','day'=>'15', 'title'=>'GRE Diagnostic Session',   'duration'=>'2 hrs','scope'=>'Quant focus',   'past'=>false],
-    ['id'=>3,'month'=>'Sep','day'=>'3',  'title'=>'TOEFL Full Practice Test',  'duration'=>'2 hrs','scope'=>'All sections',  'past'=>false],
+    ['id'=>1,'month'=>'Aug','day'=>'8',  'title'=>'IELTS Full Mock Test',      'duration'=>'3 hrs',  'scope'=>'All sections',  'exam'=>'ielts', 'past'=>false],
+    ['id'=>2,'month'=>'Aug','day'=>'15', 'title'=>'GRE Diagnostic Session',    'duration'=>'2 hrs',  'scope'=>'Quant focus',   'exam'=>'gre',   'past'=>false],
+    ['id'=>3,'month'=>'Sep','day'=>'3',  'title'=>'TOEFL Full Practice Test',  'duration'=>'2 hrs',  'scope'=>'All sections',  'exam'=>'toefl', 'past'=>false],
 ];
 
-// ── FETCH USER PROGRESS (DB) ─────────────────────────
-$progress  = ['ielts'=>0,'gre'=>0,'toefl'=>0];
-$bookmarks = [];
-$lastExam  = null;
-$mockRegs  = []; // IDs of mocks the user has registered for
+// ── FETCH USER PROGRESS & STATE (DB) ─────────────────────────────────────────
+$progress         = ['ielts'=>0,'gre'=>0,'toefl'=>0];
+$bookmarks        = [];
+$lastExam         = null;
+$mockRegs         = [];
+$completedModules = [];
 
 if ($isLoggedIn) {
     try {
         $pdo = getDB();
 
-        // User progress per exam
-        $stmt = $pdo->prepare(
-            'SELECT exam_key, progress_pct, last_module FROM test_prep_progress WHERE user_id = ?'
-        );
+        $stmt = $pdo->prepare('SELECT exam_key, progress_pct, last_module FROM test_prep_progress WHERE user_id = ?');
         $stmt->execute([$userId]);
         foreach ($stmt->fetchAll() as $row) {
             $key = strtolower($row['exam_key']);
@@ -101,30 +101,29 @@ if ($isLoggedIn) {
             }
         }
 
-        // Bookmarked resource IDs
-        $stmt = $pdo->prepare(
-            'SELECT resource_id FROM test_prep_bookmarks WHERE user_id = ?'
-        );
+        $stmt = $pdo->prepare('SELECT resource_id FROM test_prep_bookmarks WHERE user_id = ?');
         $stmt->execute([$userId]);
         $bookmarks = array_column($stmt->fetchAll(), 'resource_id');
 
-        // Mock registrations
-        $stmt = $pdo->prepare(
-            'SELECT mock_id FROM test_prep_mock_registrations WHERE user_id = ? AND status != "cancelled"'
-        );
+        $stmt = $pdo->prepare('SELECT mock_id FROM test_prep_mock_registrations WHERE user_id = ? AND status != "cancelled"');
         $stmt->execute([$userId]);
-        $mockRegs = array_column($stmt->fetchAll(), 'mock_id');
+        $mockRegs = array_map('intval', array_column($stmt->fetchAll(), 'mock_id'));
+
+        $stmt = $pdo->prepare('SELECT exam_key, module_slug FROM test_prep_module_completions WHERE user_id = ?');
+        $stmt->execute([$userId]);
+        foreach ($stmt->fetchAll() as $row) {
+            $completedModules[$row['exam_key']][] = $row['module_slug'];
+        }
 
     } catch (PDOException $e) {
         error_log('testPrep DB error: ' . $e->getMessage());
     }
 }
 
-// ── PROGRESS LABELS ──────────────────────────────────
 $progressRows = [
-    ['key'=>'ielts', 'label'=>'IELTS Preparation',  'pct'=>$progress['ielts']],
-    ['key'=>'gre',   'label'=>'GRE Quantitative',   'pct'=>$progress['gre']],
-    ['key'=>'toefl', 'label'=>'TOEFL Speaking',      'pct'=>$progress['toefl']],
+    ['key'=>'ielts', 'label'=>'IELTS Preparation', 'pct'=>$progress['ielts'], 'modules'=>12],
+    ['key'=>'gre',   'label'=>'GRE Preparation',   'pct'=>$progress['gre'],   'modules'=>10],
+    ['key'=>'toefl', 'label'=>'TOEFL Preparation', 'pct'=>$progress['toefl'], 'modules'=>9],
 ];
 
 $cssPath = BASE_URL . '/src/output.css';
@@ -135,25 +134,224 @@ $cssPath = BASE_URL . '/src/output.css';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Editorial Scholar — Test Prep</title>
-
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;0,800;1,300;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Primary: compiled Tailwind output -->
   <link rel="stylesheet" href="<?= $cssPath ?>">
-
-  <!-- Test Prep component styles (extracted from inline <style>) -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/testPrep.css">
+
+  <style>
+    /* ── Materials Panel ───────────────────────────────── */
+    .materials-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(3,22,50,0.55);
+      align-items: flex-start; justify-content: flex-end;
+    }
+    .materials-overlay.open { display: flex; }
+    .materials-drawer {
+      background: #fff;
+      width: 100%; max-width: 520px;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column;
+      box-shadow: -8px 0 40px rgba(3,22,50,0.18);
+      animation: drawer-in 0.28s ease;
+    }
+    @keyframes drawer-in {
+      from { transform: translateX(60px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    .drawer-head {
+      padding: 1.5rem 2rem 1.25rem;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem;
+      position: sticky; top: 0; background: #fff; z-index: 2;
+    }
+    .drawer-exam-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--color-gold);
+      padding: 0.3rem 0.75rem; border: 1px solid rgba(119,90,25,0.3);
+      border-radius: 2px;
+    }
+    .drawer-title {
+      font-family: var(--font-newsreader);
+      font-weight: 700; font-size: 1.3rem; color: var(--color-navy);
+      margin-top: 0.5rem;
+    }
+    .drawer-progress-bar {
+      height: 4px; width: 100%;
+      background: #E2E8F0; border-radius: 9999px; overflow: hidden;
+      margin-top: 0.75rem;
+    }
+    .drawer-progress-fill {
+      height: 100%; border-radius: 9999px;
+      background: linear-gradient(90deg, #775A19, #A16207);
+      transition: width 0.5s ease;
+    }
+    .drawer-progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.72rem; color: var(--color-muted);
+      margin-top: 0.35rem;
+    }
+    .drawer-close {
+      background: none; border: none;
+      font-size: 1.5rem; color: var(--color-muted);
+      cursor: pointer; transition: color 0.15s; flex-shrink: 0;
+    }
+    .drawer-close:hover { color: var(--color-navy); }
+
+    /* Tabs */
+    .drawer-tabs {
+      display: flex; border-bottom: 1px solid #E2E8F0;
+      padding: 0 1.5rem; gap: 0; flex-shrink: 0;
+    }
+    .drawer-tab {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--color-muted);
+      border: none; background: none; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .drawer-tab.active {
+      color: var(--color-navy);
+      border-bottom-color: var(--color-gold);
+    }
+    .drawer-tab-panel { display: none; padding: 1.5rem; flex-direction: column; gap: 0.75rem; }
+    .drawer-tab-panel.active { display: flex; }
+
+    /* Material rows */
+    .material-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid rgba(197,198,206,0.45);
+      border-radius: 6px; background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .material-row.completed { background: #F0FDF4; border-color: rgba(5,150,105,0.25); }
+    .material-row:hover {
+      border-color: rgba(119,90,25,0.35);
+      box-shadow: 0 2px 12px rgba(3,22,50,0.06);
+    }
+    .material-icon-wrap {
+      flex-shrink: 0; width: 2.75rem; height: 2.75rem;
+      background: #EEF0F2; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--color-gold);
+    }
+    .material-info { flex: 1; min-width: 0; }
+    .material-title {
+      font-size: 0.88rem; font-weight: 700; color: var(--color-navy);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .material-meta { font-size: 0.7rem; color: var(--color-muted); margin-top: 3px; }
+    .material-section-tag {
+      display: inline-block; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      background: #EEF2F8; color: var(--color-navy-2);
+      padding: 0.15rem 0.5rem; border-radius: 2px; margin-top: 4px;
+    }
+    .material-actions { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+    .btn-complete {
+      display: flex; align-items: center; gap: 0.35rem;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px;
+      padding: 0.3rem 0.75rem; border-radius: 3px; border: 1px solid;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-complete.not-done {
+      background: transparent; color: var(--color-navy);
+      border-color: var(--color-navy);
+    }
+    .btn-complete.not-done:hover { background: var(--color-navy); color: #fff; }
+    .btn-complete.done {
+      background: #166534; color: #fff; border-color: #166534;
+    }
+    .material-download-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--color-muted); font-size: 1rem;
+      transition: color 0.15s;
+    }
+    .material-download-btn:hover { color: var(--color-navy); }
+    .materials-loading {
+      text-align: center; padding: 2.5rem 1rem;
+      color: var(--color-muted); font-size: 0.85rem;
+    }
+    .materials-loading i { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.4; }
+
+    /* Filter bar */
+    .drawer-filters {
+      display: flex; gap: 0.5rem; padding: 1rem 1.5rem 0;
+      flex-wrap: wrap; flex-shrink: 0;
+    }
+    .filter-chip {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.4px;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      border: 1px solid #D1D5DB; background: #fff; color: #6B7280;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .filter-chip.active { background: var(--color-navy); color: #fff; border-color: var(--color-navy); }
+
+    /* Materials pagination */
+    .drawer-pagination {
+      display: flex; align-items: center; gap: 0.5rem;
+      justify-content: center; padding: 1rem 0 0.5rem;
+      flex-shrink: 0;
+    }
+    .page-btn {
+      width: 30px; height: 30px; border-radius: 4px;
+      border: 1px solid #D1D5DB; background: #fff;
+      font-size: 0.75rem; font-weight: 700; color: #374151;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .page-btn.active { background: var(--color-navy); color: #fff; border-color: var(--color-navy); }
+    .page-btn:hover:not(.active) { border-color: var(--color-gold); color: var(--color-gold); }
+
+    /* Score summary in drawer */
+    .exam-score-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.75rem; margin-bottom: 1rem;
+    }
+    .exam-score-card {
+      background: #F8FAFC; border: 1px solid #E2E8F0;
+      border-radius: 6px; padding: 0.9rem 1rem;
+    }
+    .exam-score-val {
+      font-family: var(--font-newsreader);
+      font-size: 1.2rem; font-weight: 700; color: var(--color-navy);
+    }
+    .exam-score-lbl {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--color-muted); margin-top: 2px;
+    }
+
+    /* Exam card open state */
+    .exam-card.panel-open {
+      border: 2px solid var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(119,90,25,0.12);
+    }
+
+    /* Auth gate inline */
+    .auth-gate-inline {
+      text-align: center; padding: 2rem 1rem;
+      background: rgba(3,22,50,0.04); border: 1px dashed #CBD5E1;
+      border-radius: 6px;
+      font-size: 0.82rem; color: var(--color-muted);
+    }
+    .auth-gate-inline a { color: var(--color-gold-lt); font-weight: 600; }
+  </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      NAV
-═══════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════ -->
 <nav class="site-nav">
   <div class="nav-inner">
     <span class="nav-logo">The Editorial Scholar</span>
-
     <div class="nav-links">
       <a href="<?= BASE_URL ?>/index.html">Programs</a>
       <a href="<?= BASE_URL ?>/scholarship.php">Scholarships</a>
@@ -161,40 +359,33 @@ $cssPath = BASE_URL . '/src/output.css';
       <a href="<?= BASE_URL ?>/visa.html">Visa Guide</a>
       <a href="<?= BASE_URL ?>/research.php">Research</a>
     </div>
-
     <div class="nav-right">
       <div class="search-wrap">
         <i class="ri-search-line" style="font-size:1.1rem;color:#44474D;"></i>
         <input type="search" id="globalSearch" placeholder="Search resources…" />
       </div>
-
       <?php if ($isLoggedIn): ?>
         <div class="user-pill">
           <i class="ri-user-3-line"></i>
           <span><?= $userName ?></span>
         </div>
       <?php else: ?>
-        <button class="btn-signin" onclick="window.location.href='<?= BASE_URL ?>/auth/signIn.php'">
-          Sign in
-        </button>
+        <button class="btn-signin" onclick="window.location.href='<?= BASE_URL ?>/auth/signIn.php'">Sign in</button>
       <?php endif; ?>
     </div>
   </div>
 </nav>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      MAIN
-═══════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════ -->
 <main>
 
-  <!-- ── HERO ───────────────────────────────────────── -->
+  <!-- ── HERO ───────────────────────────────────────────── -->
   <section class="hero">
     <div class="hero-left">
       <p class="eyebrow">Preparation Excellence</p>
-      <h1>
-        Mastering the<br/>
-        <em>Standardized Path.</em>
-      </h1>
+      <h1>Mastering the<br/><em>Standardized Path.</em></h1>
       <p class="hero-desc">
         Structured programmes, diagnostic tools, and examiner-designed resources for IELTS, GRE, and TOEFL success.
       </p>
@@ -215,7 +406,7 @@ $cssPath = BASE_URL . '/src/output.css';
     </div>
   </section>
 
-  <!-- ── EXAM CARDS ─────────────────────────────────── -->
+  <!-- ── EXAM CARDS ─────────────────────────────────────── -->
   <section style="display:flex;flex-direction:column;gap:1.5rem;">
     <div class="section-header">
       <h2 class="section-title">Select Your Exam</h2>
@@ -224,8 +415,8 @@ $cssPath = BASE_URL . '/src/output.css';
 
     <div class="exam-grid">
       <?php foreach ($exams as $key => $exam): ?>
-      <a class="exam-card" href="<?= htmlspecialchars($exam['reg_url']) ?>" target="_blank" rel="noopener noreferrer">
-        <div class="exam-top-bar"></div>
+      <div class="exam-card" id="exam-card-<?= $key ?>" data-exam="<?= $key ?>">
+        <div class="exam-top-bar" style="background:<?= $exam['color'] ?>;"></div>
         <div class="exam-head">
           <span class="exam-badge">
             <i class="<?= $exam['icon'] ?>" style="font-size:0.75rem;"></i>
@@ -260,14 +451,22 @@ $cssPath = BASE_URL . '/src/output.css';
         </div>
         <div class="exam-footer">
           <span class="exam-module-count"><?= $exam['modules'] ?> Modules</span>
-          <span class="cta-btn">Register Now <i class="ri-external-link-line" style="font-size:0.9rem;"></i></span>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <button class="cta-btn" onclick="openMaterials('<?= $key ?>')">
+              <i class="ri-book-3-line" style="font-size:0.9rem;"></i> Study Now
+            </button>
+            <a href="<?= htmlspecialchars($exam['reg_url']) ?>" target="_blank" rel="noopener"
+               class="cta-btn" style="background:transparent;border:1px solid var(--color-navy);color:var(--color-navy);">
+              Register <i class="ri-external-link-line" style="font-size:0.85rem;"></i>
+            </a>
+          </div>
         </div>
-      </a>
+      </div>
       <?php endforeach; ?>
     </div>
   </section>
 
-  <!-- ── BENTO GRID ─────────────────────────────────── -->
+  <!-- ── BENTO GRID ─────────────────────────────────────── -->
   <section class="bento">
 
     <!-- LEFT COLUMN -->
@@ -293,15 +492,26 @@ $cssPath = BASE_URL . '/src/output.css';
         </div>
 
         <?php if ($isLoggedIn): ?>
-          <div class="progress-bars">
+          <div class="progress-bars" id="progressBars">
             <?php foreach ($progressRows as $row): ?>
-            <div class="progress-row">
+            <div class="progress-row" data-exam="<?= $row['key'] ?>">
               <div class="progress-label-row">
                 <span class="progress-lbl"><?= htmlspecialchars($row['label']) ?></span>
-                <span class="progress-lbl"><?= $row['pct'] ?>%</span>
+                <span class="progress-lbl" id="prog-pct-<?= $row['key'] ?>"><?= $row['pct'] ?>%</span>
               </div>
               <div class="progress-track">
-                <div class="progress-fill" style="width:<?= $row['pct'] ?>%"></div>
+                <div class="progress-fill" id="prog-bar-<?= $row['key'] ?>" style="width:<?= $row['pct'] ?>%"></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+                <span style="font-size:0.62rem;color:rgba(255,255,255,0.4);">
+                  <span id="prog-done-<?= $row['key'] ?>"><?= $row['pct'] > 0 ? (int)round($row['pct'] * $row['modules'] / 100) : 0 ?></span> /
+                  <?= $row['modules'] ?> modules
+                </span>
+                <button onclick="openMaterials('<?= $row['key'] ?>')"
+                  style="font-size:0.62rem;font-weight:700;letter-spacing:0.5px;color:var(--color-gold-bg);
+                         background:none;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:0.8px;">
+                  Continue →
+                </button>
               </div>
             </div>
             <?php endforeach; ?>
@@ -371,7 +581,7 @@ $cssPath = BASE_URL . '/src/output.css';
                   <button
                     class="mock-register-btn <?= $registered ? 'registered' : '' ?>"
                     style="margin-top:6px;font-size:0.68rem;font-weight:700;letter-spacing:0.5px;
-                           padding:3px 10px;border-radius:3px;border:1px solid;cursor:pointer;
+                           padding:4px 12px;border-radius:3px;border:1px solid;cursor:pointer;
                            background:<?= $registered ? '#166534' : 'transparent' ?>;
                            color:<?= $registered ? '#fff' : 'var(--color-navy)' ?>;
                            border-color:<?= $registered ? '#166534' : 'var(--color-navy)' ?>;"
@@ -382,7 +592,7 @@ $cssPath = BASE_URL . '/src/output.css';
                 <?php else: ?>
                   <button
                     style="margin-top:6px;font-size:0.68rem;font-weight:700;letter-spacing:0.5px;
-                           padding:3px 10px;border-radius:3px;border:1px solid var(--color-navy);
+                           padding:4px 12px;border-radius:3px;border:1px solid var(--color-navy);
                            background:transparent;color:var(--color-navy);cursor:pointer;"
                     onclick="window.location.href='<?= BASE_URL ?>/auth/signIn.php'">
                     Sign in to Register
@@ -402,26 +612,21 @@ $cssPath = BASE_URL . '/src/output.css';
         <div class="scholars-grad"></div>
         <div class="scholars-content">
           <h3 class="scholars-title">Scholars Circle</h3>
-          <p class="scholars-desc">
-            Join 4,000+ applicants discussing prep strategies and score improvements.
-          </p>
-          <a href="#" class="scholars-link">
-            Join the Community <i class="ri-arrow-right-line" style="font-size:0.9rem;"></i>
-          </a>
+          <p class="scholars-desc">Join 4,000+ applicants discussing prep strategies and score improvements.</p>
+          <a href="#" class="scholars-link">Join the Community <i class="ri-arrow-right-line" style="font-size:0.9rem;"></i></a>
         </div>
       </div>
 
     </aside>
   </section>
 
-  <!-- ── ADMISSIONS LIAISON ─────────────────────────── -->
+  <!-- ── ADMISSIONS LIAISON ─────────────────────────────── -->
   <div class="liaison-box">
     <h3 class="liaison-title">Admissions Liaison</h3>
     <p class="liaison-desc">Need help choosing the right test for your target university?</p>
     <div class="liaison-advisor">
       <div class="liaison-avatar">
-        <img src="https://www.shutterstock.com/image-vector/professional-businesswoman-icon-corporate-female-600w-2741202739.jpg"
-             alt="Dr. Sarah Chen" />
+        <img src="https://www.shutterstock.com/image-vector/professional-businesswoman-icon-corporate-female-600w-2741202739.jpg" alt="Dr. Sarah Chen" />
       </div>
       <div>
         <div class="liaison-name">Dr. Sarah Chen</div>
@@ -433,16 +638,67 @@ $cssPath = BASE_URL . '/src/output.css';
 
 </main>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
+     MATERIALS DRAWER
+════════════════════════════════════════════════════════ -->
+<div class="materials-overlay" id="materialsOverlay" onclick="handleOverlayClick(event)">
+  <div class="materials-drawer" id="materialsDrawer">
+
+    <div class="drawer-head">
+      <div style="flex:1;min-width:0;">
+        <span class="drawer-exam-badge" id="drawerBadge">IELTS</span>
+        <div class="drawer-title" id="drawerTitle">Study Materials</div>
+        <div class="drawer-progress-bar">
+          <div class="drawer-progress-fill" id="drawerProgressFill" style="width:0%"></div>
+        </div>
+        <div class="drawer-progress-label">
+          <span id="drawerProgressLabel">0% complete</span>
+          <span id="drawerModuleCount">0 / 0 modules</span>
+        </div>
+      </div>
+      <button class="drawer-close" onclick="closeMaterials()"><i class="ri-close-line"></i></button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="drawer-tabs">
+      <button class="drawer-tab active" onclick="switchTab('modules', this)">Modules</button>
+      <button class="drawer-tab" onclick="switchTab('overview', this)">Overview</button>
+      <button class="drawer-tab" onclick="switchTab('schedule', this)">Mock Tests</button>
+    </div>
+
+    <!-- Tab: Modules -->
+    <div class="drawer-tab-panel active" id="tab-modules">
+      <div class="drawer-filters" id="sectionFilters"></div>
+      <div id="materialsContainer" style="display:flex;flex-direction:column;gap:0.75rem;padding:0 0 0.5rem;">
+        <div class="materials-loading">
+          <i class="ri-loader-4-line"></i>Loading modules…
+        </div>
+      </div>
+      <div class="drawer-pagination" id="drawerPagination"></div>
+    </div>
+
+    <!-- Tab: Overview -->
+    <div class="drawer-tab-panel" id="tab-overview">
+      <div id="overviewContent"></div>
+    </div>
+
+    <!-- Tab: Mock Tests -->
+    <div class="drawer-tab-panel" id="tab-schedule">
+      <div id="scheduleContent"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      CONSULTATION MODAL
-═══════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="consultModal">
   <div class="modal">
     <div class="modal-header">
       <span class="modal-title">Book a Consultation</span>
       <button class="modal-close" onclick="closeConsultModal()"><i class="ri-close-line"></i></button>
     </div>
-
     <?php if ($isLoggedIn): ?>
       <p style="font-size:0.82rem;color:var(--color-muted);">
         Reserve a 30-minute session with Dr. Sarah Chen to discuss your exam strategy.
@@ -460,11 +716,8 @@ $cssPath = BASE_URL . '/src/output.css';
           <label>Time Slot</label>
           <select id="consultTime">
             <option value="">— select —</option>
-            <option>10:00 AM</option>
-            <option>11:00 AM</option>
-            <option>2:00 PM</option>
-            <option>3:00 PM</option>
-            <option>4:00 PM</option>
+            <option>10:00 AM</option><option>11:00 AM</option>
+            <option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option>
           </select>
         </div>
       </div>
@@ -472,10 +725,7 @@ $cssPath = BASE_URL . '/src/output.css';
         <label>Target Exam</label>
         <select id="consultExam">
           <option value="">— select —</option>
-          <option>IELTS</option>
-          <option>GRE</option>
-          <option>TOEFL</option>
-          <option>Multiple / Unsure</option>
+          <option>IELTS</option><option>GRE</option><option>TOEFL</option><option>Multiple / Unsure</option>
         </select>
       </div>
       <div class="form-row">
@@ -486,21 +736,18 @@ $cssPath = BASE_URL . '/src/output.css';
     <?php else: ?>
       <p class="modal-login-note">
         Please <a href="<?= BASE_URL ?>/auth/signIn.php">sign in</a> or
-        <a href="<?= BASE_URL ?>/auth/signUp.php">create a free account</a>
-        to book a consultation.
+        <a href="<?= BASE_URL ?>/auth/signUp.php">create a free account</a> to book a consultation.
       </p>
     <?php endif; ?>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     TOAST
-═══════════════════════════════════════════════════ -->
+<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      FOOTER
-═══════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════ -->
 <footer>
   <div class="footer-inner">
     <div>
@@ -529,15 +776,23 @@ $cssPath = BASE_URL . '/src/output.css';
   </div>
 </footer>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      JAVASCRIPT
-═══════════════════════════════════════════════════ -->
+════════════════════════════════════════════════════════ -->
 <script>
 const BASE      = '<?= BASE_URL ?>';
 const LOGGED_IN = <?= $isLoggedIn ? 'true' : 'false' ?>;
 const API       = BASE + '/tesrprep_api.php';
 
-// ── Toast helper ─────────────────────────────────────
+// PHP-side data injected for immediate use
+const INIT_PROGRESS  = <?= json_encode($progress) ?>;
+const INIT_BOOKMARKS = <?= json_encode($bookmarks) ?>;
+const INIT_MOCKREGS  = <?= json_encode($mockRegs) ?>;
+const INIT_COMPLETED = <?= json_encode($completedModules) ?>;
+const MODULE_TOTALS  = { ielts: 12, gre: 10, toefl: 9 };
+const EXAM_NAMES     = { ielts: 'IELTS', gre: 'GRE', toefl: 'TOEFL' };
+
+// ── Toast ────────────────────────────────────────────────
 function showToast(msg, type = '') {
   const toast = document.getElementById('toast');
   const el    = document.createElement('div');
@@ -547,19 +802,33 @@ function showToast(msg, type = '') {
   setTimeout(() => el.remove(), 3500);
 }
 
-// ── Bookmark toggle ───────────────────────────────────
-async function toggleBookmark(resourceId, iconEl) {
-  if (!LOGGED_IN) {
-    showToast('Sign in to bookmark resources.', 'error');
-    return;
+// ── Progress UI update ───────────────────────────────────
+function updateProgressUI(examKey, pct, done) {
+  const bar  = document.getElementById('prog-bar-' + examKey);
+  const pctEl= document.getElementById('prog-pct-' + examKey);
+  const doneEl=document.getElementById('prog-done-' + examKey);
+  if (bar)   bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (doneEl)doneEl.textContent = done;
+
+  // Update drawer header if open on this exam
+  if (_drawerExam === examKey) {
+    const total = MODULE_TOTALS[examKey];
+    document.getElementById('drawerProgressFill').style.width = pct + '%';
+    document.getElementById('drawerProgressLabel').textContent = pct + '% complete';
+    document.getElementById('drawerModuleCount').textContent = done + ' / ' + total + ' modules';
   }
+}
+
+// ── Bookmark toggle ──────────────────────────────────────
+async function toggleBookmark(resourceId, iconEl) {
+  if (!LOGGED_IN) { showToast('Sign in to bookmark resources.', 'error'); return; }
   const isBookmarked = iconEl.classList.contains('bookmarked');
   const action = isBookmarked ? 'remove' : 'add';
 
   try {
     const res  = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'bookmark', resource_id: resourceId, mode: action })
     });
     const data = await res.json();
@@ -578,18 +847,14 @@ async function toggleBookmark(resourceId, iconEl) {
     } else {
       showToast(data.message || 'Something went wrong.', 'error');
     }
-  } catch {
-    showToast('Network error. Please try again.', 'error');
-  }
+  } catch { showToast('Network error. Please try again.', 'error'); }
 }
 
-// ── Download resource ─────────────────────────────────
+// ── Download resource ────────────────────────────────────
 async function downloadResource(resourceId, fileUrl) {
-  // Log the download server-side (best-effort)
   if (LOGGED_IN) {
     fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'log_download', resource_id: resourceId })
     }).catch(() => {});
   }
@@ -600,60 +865,431 @@ async function downloadResource(resourceId, fileUrl) {
   }
 }
 
-// ── Mock session register/unregister ─────────────────
+// ── Mock register ────────────────────────────────────────
 async function toggleMockReg(mockId, btn) {
   const alreadyRegistered = btn.dataset.registered === '1';
   const action = alreadyRegistered ? 'unregister_mock' : 'register_mock';
-
   btn.disabled = true;
   try {
     const res  = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, mock_id: mockId })
     });
     const data = await res.json();
     if (data.success) {
       if (!alreadyRegistered) {
-        btn.textContent      = '✓ Registered';
+        btn.textContent = '✓ Registered';
         btn.dataset.registered = '1';
         btn.style.background = '#166534';
-        btn.style.color      = '#fff';
-        btn.style.borderColor= '#166534';
+        btn.style.color = '#fff';
+        btn.style.borderColor = '#166534';
         showToast('You\'re registered for this mock session.', 'success');
       } else {
-        btn.textContent      = 'Register';
+        btn.textContent = 'Register';
         btn.dataset.registered = '0';
         btn.style.background = 'transparent';
-        btn.style.color      = 'var(--color-navy)';
-        btn.style.borderColor= 'var(--color-navy)';
+        btn.style.color = 'var(--color-navy)';
+        btn.style.borderColor = 'var(--color-navy)';
         showToast('Registration cancelled.');
       }
     } else {
       showToast(data.message || 'Something went wrong.', 'error');
     }
+  } catch { showToast('Network error. Please try again.', 'error'); }
+  finally { btn.disabled = false; }
+}
+
+// ── Mark module complete ─────────────────────────────────
+async function markModuleComplete(examKey, moduleSlug, btn) {
+  if (!LOGGED_IN) { showToast('Sign in to track your progress.', 'error'); return; }
+
+  const isDone = btn.classList.contains('done');
+  if (isDone) { showToast('Module already marked as complete.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ri-loader-4-line"></i> Saving…';
+
+  try {
+    const res  = await fetch(API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'update_progress', exam_key: examKey, module: moduleSlug })
+    });
+    const data = await res.json();
+    if (data.success) {
+      // Update button state
+      btn.classList.replace('not-done', 'done');
+      btn.innerHTML = '<i class="ri-checkbox-circle-fill"></i> Completed';
+      btn.disabled  = false;
+
+      // Update parent row
+      const row = btn.closest('.material-row');
+      if (row) row.classList.add('completed');
+
+      // Update progress bars
+      updateProgressUI(examKey, data.progress_pct, data.modules_done);
+
+      // Update resume button
+      const resumeBtn = document.getElementById('btnResume');
+      if (resumeBtn) {
+        resumeBtn.disabled   = false;
+        resumeBtn.textContent= 'Resume ' + EXAM_NAMES[examKey];
+      }
+
+      showToast('Module complete! Progress saved.', 'success');
+    } else {
+      btn.innerHTML = 'Mark Complete';
+      btn.disabled  = false;
+      showToast(data.message || 'Could not save progress.', 'error');
+    }
   } catch {
+    btn.innerHTML = 'Mark Complete';
+    btn.disabled  = false;
     showToast('Network error. Please try again.', 'error');
-  } finally {
-    btn.disabled = false;
   }
 }
 
-// ── Resume practice ───────────────────────────────────
+// ── Materials Drawer ─────────────────────────────────────
+let _drawerExam     = null;
+let _currentPage    = 1;
+let _activeFilter   = 'all';
+const _examData     = <?= json_encode(array_map(fn($e) => [
+    'name'     => $e['name'],
+    'subtitle' => $e['subtitle'],
+    'sections' => $e['sections'],
+    'modules'  => $e['modules'],
+    'score'    => $e['score'],
+    'score_lbl'=> $e['score_lbl'],
+    'fee'      => $e['fee'],
+    'duration' => $e['duration'],
+    'validity' => $e['validity'],
+    'reg_url'  => $e['reg_url'],
+], $exams)) ?>;
+
+function openMaterials(examKey) {
+  _drawerExam   = examKey;
+  _currentPage  = 1;
+  _activeFilter = 'all';
+
+  const exam = _examData[examKey];
+
+  // Update drawer header
+  document.getElementById('drawerBadge').textContent = exam.name;
+  document.getElementById('drawerTitle').textContent = exam.name + ' Preparation';
+
+  const pct   = INIT_PROGRESS[examKey] || 0;
+  const total = MODULE_TOTALS[examKey];
+  const done  = Math.round(pct * total / 100);
+  document.getElementById('drawerProgressFill').style.width = pct + '%';
+  document.getElementById('drawerProgressLabel').textContent = pct + '% complete';
+  document.getElementById('drawerModuleCount').textContent   = done + ' / ' + total + ' modules';
+
+  // Highlight exam card
+  document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('panel-open'));
+  const card = document.getElementById('exam-card-' + examKey);
+  if (card) card.classList.add('panel-open');
+
+  // Build overview tab
+  buildOverviewTab(examKey);
+  buildScheduleTab(examKey);
+
+  // Show drawer
+  document.getElementById('materialsOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Switch to modules tab & load
+  switchTab('modules', document.querySelector('.drawer-tab'));
+  loadMaterials(1);
+}
+
+function closeMaterials() {
+  document.getElementById('materialsOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('panel-open'));
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('materialsOverlay')) closeMaterials();
+}
+
+// ── Load materials via API ────────────────────────────────
+async function loadMaterials(page = 1) {
+  _currentPage = page;
+  const container = document.getElementById('materialsContainer');
+  container.innerHTML = '<div class="materials-loading"><i class="ri-loader-4-line"></i>Loading modules…</div>';
+  document.getElementById('drawerPagination').innerHTML = '';
+
+  try {
+    const res  = await fetch(API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_materials', exam_key: _drawerExam, page })
+    });
+    const data = await res.json();
+
+    if (!data.success) { throw new Error(data.message || 'Load failed'); }
+
+    // Build section filters
+    const allSections = [...new Set(data.materials.map(m => m.section_tag).filter(Boolean))];
+    buildSectionFilters(allSections);
+
+    // Render
+    renderMaterials(data.materials);
+    renderPagination(data.page, data.total_pages);
+
+  } catch (err) {
+    container.innerHTML = `
+      <div style="padding:2rem;text-align:center;color:#991b1b;background:#fef2f2;border-radius:6px;font-size:0.83rem;">
+        <i class="ri-error-warning-line" style="display:block;font-size:1.5rem;margin-bottom:0.5rem;"></i>
+        Could not load modules. ${err.message}
+      </div>`;
+  }
+}
+
+// Fallback: render from static data if API not wired yet
+function loadMaterialsFallback() {
+  const staticData = {
+    ielts:  [
+      {module_slug:'ielts-intro',completed:false,icon:'ri-play-circle-line',title:'IELTS Overview & Exam Format',meta:'Video • 18 min • All Levels',section_tag:'Overview',material_type:'video'},
+      {module_slug:'ielts-listening-1',completed:false,icon:'ri-headphone-line',title:'Listening Section 1 – Form Completion',meta:'Audio Practice • 22:45 • Beginner',section_tag:'Listening',material_type:'audio'},
+      {module_slug:'ielts-reading-skills',completed:false,icon:'ri-video-line',title:'Reading Skimming & Scanning Masterclass',meta:'Video Lecture • 24 min • Intermediate',section_tag:'Reading',material_type:'video'},
+      {module_slug:'ielts-writing-task2',completed:false,icon:'ri-article-line',title:'Writing Task 2 – Band 9 Sample Essays',meta:'Interactive Article • 8 min read',section_tag:'Writing',material_type:'article'},
+      {module_slug:'ielts-speaking-parts',completed:false,icon:'ri-video-line',title:'Speaking Parts 1–3 Full Walkthrough',meta:'Video Lecture • 28 min • Intermediate',section_tag:'Speaking',material_type:'video'},
+      {module_slug:'ielts-full-mock',completed:false,icon:'ri-questionnaire-line',title:'Full IELTS Mock Test with Answer Key',meta:'Mock Exam • 2 hrs 45 min • All Levels',section_tag:'Mock Test',material_type:'quiz'},
+    ],
+    gre:   [
+      {module_slug:'gre-intro',completed:false,icon:'ri-play-circle-line',title:'GRE General Test Overview',meta:'Video • 14 min • All Levels',section_tag:'Overview',material_type:'video'},
+      {module_slug:'gre-verbal-vocab',completed:false,icon:'ri-file-pdf-line',title:'GRE Vocabulary: High-Frequency Words 500+',meta:'PDF Flashcards • 5.1 MB • All Levels',section_tag:'Verbal',material_type:'pdf'},
+      {module_slug:'gre-quant-strategy',completed:false,icon:'ri-file-pdf-line',title:'GRE Quantitative Strategy Guide',meta:'PDF Document • 4.2 MB • Advanced',section_tag:'Quantitative',material_type:'pdf'},
+      {module_slug:'gre-aw-issue',completed:false,icon:'ri-article-line',title:'Analytical Writing: Issue Task Templates',meta:'Article + Samples • 15 min • Advanced',section_tag:'Analytical Writing',material_type:'article'},
+      {module_slug:'gre-full-mock',completed:false,icon:'ri-questionnaire-line',title:'GRE Full-Length Adaptive Mock Test',meta:'Mock Exam • 1 hr 58 min • All Levels',section_tag:'Mock Test',material_type:'quiz'},
+    ],
+    toefl: [
+      {module_slug:'toefl-intro',completed:false,icon:'ri-play-circle-line',title:'TOEFL iBT Format & Scoring Guide',meta:'Video • 12 min • All Levels',section_tag:'Overview',material_type:'video'},
+      {module_slug:'toefl-listening-notes',completed:false,icon:'ri-headphone-line',title:'Listening: Note-Taking Techniques',meta:'Audio + Notes • 25 min • All Levels',section_tag:'Listening',material_type:'audio'},
+      {module_slug:'toefl-speaking-t1',completed:false,icon:'ri-video-line',title:'Speaking Task 1: Independent Response Method',meta:'TOEFL Speaking • 14:20 • Instructional',section_tag:'Speaking',material_type:'video'},
+      {module_slug:'toefl-writing-integrated',completed:false,icon:'ri-article-line',title:'Integrated Writing Task: Read + Listen + Write',meta:'Interactive Article • 11 min • Advanced',section_tag:'Writing',material_type:'article'},
+      {module_slug:'toefl-full-mock',completed:false,icon:'ri-questionnaire-line',title:'TOEFL iBT Full Practice Test',meta:'Mock Exam • ~2 hrs • All Levels',section_tag:'Mock Test',material_type:'quiz'},
+    ],
+  };
+
+  const completed = INIT_COMPLETED[_drawerExam] || [];
+  const items = (staticData[_drawerExam] || []).map(m => ({
+    ...m,
+    completed: completed.includes(m.module_slug),
+  }));
+
+  const sections = [...new Set(items.map(m => m.section_tag).filter(Boolean))];
+  buildSectionFilters(sections);
+  renderMaterials(items);
+  document.getElementById('drawerPagination').innerHTML = '';
+}
+
+function buildSectionFilters(sections) {
+  const wrap = document.getElementById('sectionFilters');
+  const all  = ['all', ...sections];
+  wrap.innerHTML = all.map(s => `
+    <button class="filter-chip ${s === _activeFilter ? 'active' : ''}"
+      onclick="setFilter('${s}', this)">${s === 'all' ? 'All' : escHtml(s)}</button>
+  `).join('');
+}
+
+function setFilter(val, chip) {
+  _activeFilter = val;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  filterMaterials();
+}
+
+function filterMaterials() {
+  document.querySelectorAll('.material-row').forEach(row => {
+    const tag = row.dataset.section || '';
+    row.style.display = (_activeFilter === 'all' || tag === _activeFilter) ? '' : 'none';
+  });
+}
+
+function renderMaterials(materials) {
+  const container = document.getElementById('materialsContainer');
+  const completed = INIT_COMPLETED[_drawerExam] || [];
+
+  if (!materials.length) {
+    container.innerHTML = '<div class="materials-loading"><i class="ri-inbox-line"></i>No modules found.</div>';
+    return;
+  }
+
+  container.innerHTML = materials.map(m => {
+    const isDone = m.completed || completed.includes(m.module_slug);
+    return `
+    <div class="material-row ${isDone ? 'completed' : ''}" data-section="${escHtml(m.section_tag || '')}">
+      <div class="material-icon-wrap"><i class="${escHtml(m.icon || 'ri-file-line')}"></i></div>
+      <div class="material-info">
+        <div class="material-title">${escHtml(m.title)}</div>
+        <div class="material-meta">${escHtml(m.meta || '')}</div>
+        ${m.section_tag ? `<span class="material-section-tag">${escHtml(m.section_tag)}</span>` : ''}
+      </div>
+      <div class="material-actions">
+        ${LOGGED_IN
+          ? `<button class="btn-complete ${isDone ? 'done' : 'not-done'}"
+                onclick="markModuleComplete('${escHtml(_drawerExam)}', '${escHtml(m.module_slug)}', this)">
+              ${isDone
+                ? '<i class="ri-checkbox-circle-fill"></i> Completed'
+                : 'Mark Complete'}
+            </button>`
+          : `<button class="btn-complete not-done"
+                onclick="window.location.href='${BASE}/auth/signIn.php'"
+                title="Sign in to track progress">
+              Sign in
+            </button>`
+        }
+        <button class="material-download-btn" title="Open resource"
+          onclick="downloadResource(0, '#')">
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  filterMaterials();
+}
+
+function renderPagination(current, total) {
+  const wrap = document.getElementById('drawerPagination');
+  if (total <= 1) { wrap.innerHTML = ''; return; }
+  let html = '';
+  if (current > 1) html += `<button class="page-btn" onclick="loadMaterials(${current - 1})"><i class="ri-arrow-left-s-line"></i></button>`;
+  for (let i = 1; i <= total; i++) {
+    html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="loadMaterials(${i})">${i}</button>`;
+  }
+  if (current < total) html += `<button class="page-btn" onclick="loadMaterials(${current + 1})"><i class="ri-arrow-right-s-line"></i></button>`;
+  wrap.innerHTML = html;
+}
+
+function buildOverviewTab(examKey) {
+  const exam = _examData[examKey];
+  const pct  = INIT_PROGRESS[examKey] || 0;
+  const total= MODULE_TOTALS[examKey];
+  const done = Math.round(pct * total / 100);
+
+  document.getElementById('overviewContent').innerHTML = `
+    <div class="exam-score-grid">
+      <div class="exam-score-card">
+        <div class="exam-score-val">${exam.score}</div>
+        <div class="exam-score-lbl">${exam.score_lbl}</div>
+      </div>
+      <div class="exam-score-card">
+        <div class="exam-score-val">${exam.duration}</div>
+        <div class="exam-score-lbl">Duration</div>
+      </div>
+      <div class="exam-score-card">
+        <div class="exam-score-val">${exam.fee}</div>
+        <div class="exam-score-lbl">Exam Fee</div>
+      </div>
+      <div class="exam-score-card">
+        <div class="exam-score-val">${exam.validity}</div>
+        <div class="exam-score-lbl">Score Validity</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.82rem;line-height:1.65;color:var(--color-slate);margin-bottom:1rem;">${exam.subtitle}</p>
+
+    <div style="margin-bottom:1rem;">
+      <p style="font-size:0.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-muted);margin-bottom:0.5rem;">Sections Covered</p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+        ${exam.sections.map(s => `<span class="exam-tag">${escHtml(s)}</span>`).join('')}
+      </div>
+    </div>
+
+    ${LOGGED_IN ? `
+    <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:1rem;margin-bottom:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+        <span style="font-size:0.75rem;font-weight:700;color:var(--color-navy);">Your Progress</span>
+        <span style="font-size:0.75rem;color:var(--color-muted);">${done}/${total} modules</span>
+      </div>
+      <div style="background:#E2E8F0;border-radius:9999px;height:6px;overflow:hidden;">
+        <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#775A19,#A16207);border-radius:9999px;transition:width 0.5s;"></div>
+      </div>
+      <p style="font-size:0.7rem;color:var(--color-muted);margin-top:0.35rem;">${pct}% complete</p>
+    </div>` : `
+    <div class="auth-gate-inline" style="margin-bottom:1rem;">
+      <i class="ri-lock-line" style="font-size:1.5rem;display:block;margin:0 auto 0.5rem;color:#94A3B8;"></i>
+      <a href="${BASE}/auth/signIn.php">Sign in</a> to track your progress across ${exam.name} modules.
+    </div>`}
+
+    <a href="${exam.reg_url}" target="_blank" rel="noopener"
+       style="display:flex;align-items:center;justify-content:center;gap:0.5rem;
+              height:42px;background:var(--color-navy);color:#fff;border-radius:4px;
+              font-size:0.78rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
+              text-decoration:none;transition:background 0.2s;"
+       onmouseover="this.style.background='#1A2B48'"
+       onmouseout="this.style.background='var(--color-navy)'">
+      Register for ${exam.name} <i class="ri-external-link-line"></i>
+    </a>`;
+}
+
+function buildScheduleTab(examKey) {
+  const mocks = [
+    {id:1,month:'Aug',day:'8', title:'IELTS Full Mock Test',    duration:'3 hrs',scope:'All sections',  exam:'ielts'},
+    {id:2,month:'Aug',day:'15',title:'GRE Diagnostic Session',  duration:'2 hrs',scope:'Quant focus',   exam:'gre'},
+    {id:3,month:'Sep',day:'3', title:'TOEFL Full Practice Test',duration:'2 hrs',scope:'All sections',  exam:'toefl'},
+  ];
+  const relevant = mocks.filter(m => m.exam === examKey);
+  const all      = mocks.filter(m => m.exam !== examKey);
+
+  document.getElementById('scheduleContent').innerHTML = `
+    <p style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-muted);margin-bottom:0.75rem;">
+      ${EXAM_NAMES[examKey]} Sessions
+    </p>
+    ${relevant.length ? relevant.map(m => mockCard(m)).join('') : '<p style="font-size:0.82rem;color:var(--color-muted);">No sessions scheduled yet.</p>'}
+    ${all.length ? `
+    <p style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--color-muted);margin:1.25rem 0 0.75rem;">Other Sessions</p>
+    ${all.map(m => mockCard(m)).join('')}` : ''}`;
+}
+
+function mockCard(m) {
+  const registered = INIT_MOCKREGS.includes(m.id);
+  return `
+  <div class="mock-item" style="margin-bottom:0.75rem;">
+    <div class="mock-date-box"><span class="mock-month">${m.month}</span><span class="mock-day">${m.day}</span></div>
+    <div style="flex:1;">
+      <div class="mock-name">${escHtml(m.title)}</div>
+      <div class="mock-meta">${m.duration} &bull; ${escHtml(m.scope)}</div>
+      ${LOGGED_IN
+        ? `<button
+            class="mock-register-btn ${registered ? 'registered' : ''}"
+            style="margin-top:6px;font-size:0.68rem;font-weight:700;letter-spacing:0.5px;
+                   padding:4px 12px;border-radius:3px;border:1px solid;cursor:pointer;
+                   background:${registered ? '#166534' : 'transparent'};
+                   color:${registered ? '#fff' : 'var(--color-navy)'};
+                   border-color:${registered ? '#166534' : 'var(--color-navy)'};"
+            onclick="toggleMockReg(${m.id}, this)"
+            data-registered="${registered ? '1' : '0'}">
+            ${registered ? '✓ Registered' : 'Register'}
+          </button>`
+        : `<button style="margin-top:6px;font-size:0.68rem;font-weight:700;padding:4px 12px;border-radius:3px;border:1px solid var(--color-navy);background:transparent;color:var(--color-navy);cursor:pointer;"
+              onclick="window.location.href='${BASE}/auth/signIn.php'">Sign in to Register</button>`}
+    </div>
+  </div>`;
+}
+
+// ── Tab switching ────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.drawer-tab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('tab-' + name)?.classList.add('active');
+}
+
+// ── Resume practice ──────────────────────────────────────
 <?php if ($isLoggedIn && $lastExam): ?>
 document.getElementById('btnResume')?.addEventListener('click', () => {
-  showToast('Resuming <?= addslashes($lastExam['exam']) ?> — <?= addslashes($lastExam['module']) ?>…');
-  // TODO: navigate to the module player when it exists
-  // window.location.href = BASE + '/modules/<?= strtolower($lastExam['exam']) ?>/<?= urlencode($lastExam['module']) ?>';
+  openMaterials('<?= strtolower($lastExam['exam']) ?>');
 });
 <?php endif; ?>
 
-// ── View all schedules ────────────────────────────────
+// ── View all schedules ───────────────────────────────────
 function viewAllSchedules() {
   showToast('Full schedule coming soon. Check back shortly!');
 }
 
-// ── Search filter ─────────────────────────────────────
+// ── Search filter ────────────────────────────────────────
 document.getElementById('globalSearch').addEventListener('input', function () {
   const q = this.value.toLowerCase().trim();
   document.querySelectorAll('.resource-item').forEach(item => {
@@ -662,14 +1298,9 @@ document.getElementById('globalSearch').addEventListener('input', function () {
   });
 });
 
-// ── Consultation modal ────────────────────────────────
-function openConsultModal() {
-  document.getElementById('consultModal').classList.add('open');
-}
-function closeConsultModal() {
-  document.getElementById('consultModal').classList.remove('open');
-}
-// Close on backdrop click
+// ── Consultation modal ───────────────────────────────────
+function openConsultModal()  { document.getElementById('consultModal').classList.add('open'); }
+function closeConsultModal() { document.getElementById('consultModal').classList.remove('open'); }
 document.getElementById('consultModal').addEventListener('click', function (e) {
   if (e.target === this) closeConsultModal();
 });
@@ -688,8 +1319,7 @@ async function submitConsultation() {
 
   try {
     const res  = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'book_consultation', name, date, time, exam, notes })
     });
     const data = await res.json();
@@ -699,11 +1329,44 @@ async function submitConsultation() {
     } else {
       showToast(data.message || 'Booking failed. Try again.', 'error');
     }
+  } catch { showToast('Network error. Please try again.', 'error'); }
+}
+
+// ── Escape HTML helper ───────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── On load: try real API, fallback to static ─────────────
+async function tryLoadMaterials() {
+  const container = document.getElementById('materialsContainer');
+  try {
+    const res = await fetch(API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_materials', exam_key: _drawerExam, page: _currentPage })
+    });
+    const data = await res.json();
+    if (data.success && data.materials.length > 0) {
+      const sections = [...new Set(data.materials.map(m => m.section_tag).filter(Boolean))];
+      buildSectionFilters(sections);
+      renderMaterials(data.materials);
+      renderPagination(data.page, data.total_pages);
+    } else {
+      loadMaterialsFallback();
+    }
   } catch {
-    showToast('Network error. Please try again.', 'error');
+    loadMaterialsFallback();
   }
 }
-</script>
 
+// Override loadMaterials to use tryLoadMaterials (graceful fallback)
+async function loadMaterials(page = 1) {
+  _currentPage = page;
+  document.getElementById('materialsContainer').innerHTML =
+    '<div class="materials-loading"><i class="ri-loader-4-line"></i>Loading modules…</div>';
+  document.getElementById('drawerPagination').innerHTML = '';
+  await tryLoadMaterials();
+}
+</script>
 </body>
 </html>
