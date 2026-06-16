@@ -3,10 +3,29 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/config/scholarship_backend.php';
+require_once __DIR__ . '/config/app.php';
+require_once __DIR__ . '/includes/auth_helpers.php';
 
 scholarship_handle_post();
 $vm = scholarship_view_model();
 
+// ── Nav variables (required by nav_helper.php) ───────────────────────────────
+$base         = BASE_URL;
+$activeNav    = 'scholarships';
+$isLoggedIn   = is_logged_in();
+$role         = $_SESSION['role']      ?? '';
+$userName     = $_SESSION['full_name'] ?? '';
+
+$parts = array_filter(explode(' ', trim($userName)));
+if (count($parts) >= 2) {
+    $userInitials = strtoupper(substr($parts[0], 0, 1) . substr(end($parts), 0, 1));
+} elseif (count($parts) === 1) {
+    $userInitials = strtoupper(substr($parts[0], 0, 2));
+} else {
+    $userInitials = '';
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function page_url(array $params = []): string
 {
     $query = array_merge($_GET, $params);
@@ -15,7 +34,6 @@ function page_url(array $params = []): string
             unset($query[$key]);
         }
     }
-
     return '/scholarship.php' . ($query === [] ? '' : '?' . http_build_query($query));
 }
 
@@ -30,10 +48,18 @@ function selected_attr(string $actual, string $expected): string
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scholarship Portal - The Editorial Scholar</title>
+    <title>Scholarship Portal — The Editorial Scholar</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600;700&family=Manrope:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/src/output.css">
+
+    <!-- Tailwind output -->
+    <link rel="stylesheet" href="<?= $base ?>/src/output.css">
+
     <style>
         :root {
             --primary-dark: #0A192F;
@@ -50,24 +76,28 @@ function selected_attr(string $actual, string $expected): string
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Manrope', 'Inter', sans-serif;
             background-color: var(--bg-light);
             margin: 0;
             color: var(--primary-dark);
         }
 
-        button, input, select {
-            font: inherit;
-        }
+        button, input, select { font: inherit; }
+        button { cursor: pointer; }
 
-        button {
-            cursor: pointer;
+        /* ── Nav dropdown animation ── */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+        .animate-fade-in { animation: fadeInDown 0.15s ease; }
 
+        /* ── Push content below fixed nav ── */
         .app-container {
             display: grid;
             grid-template-columns: 240px 1fr;
             min-height: calc(100vh - 60px);
+            margin-top: 60px;
         }
 
         .portal-sidebar {
@@ -96,6 +126,7 @@ function selected_attr(string $actual, string $expected): string
             place-items: center;
             font-weight: 800;
             font-size: 0.8rem;
+            flex-shrink: 0;
         }
 
         .nav-item {
@@ -159,7 +190,7 @@ function selected_attr(string $actual, string $expected): string
         }
 
         .flash.success { color: var(--success); }
-        .flash.error { color: var(--danger); }
+        .flash.error   { color: var(--danger); }
 
         .hero-banner {
             background: linear-gradient(135deg, #0A192F 0%, #1A2E44 100%);
@@ -195,7 +226,6 @@ function selected_attr(string $actual, string $expected): string
             font-size: clamp(2.5rem, 5vw, 3.7rem);
             margin: 0 0 18px 0;
             line-height: 1.08;
-            letter-spacing: 0;
         }
 
         .hero-banner p {
@@ -225,25 +255,12 @@ function selected_attr(string $actual, string $expected): string
             align-items: center;
             justify-content: center;
             gap: 8px;
+            border: none;
         }
 
-        .btn-primary {
-            background: var(--accent-gold);
-            color: white;
-            border: 1px solid var(--accent-gold);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--primary-dark);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-link {
-            color: inherit;
-            border: 1px solid rgba(255,255,255,0.45);
-            background: rgba(255,255,255,0.08);
-        }
+        .btn-primary  { background: var(--accent-gold); color: white; border: 1px solid var(--accent-gold); }
+        .btn-secondary { background: white; color: var(--primary-dark); border: 1px solid var(--border-color); }
+        .btn-link     { color: inherit; border: 1px solid rgba(255,255,255,0.45); background: rgba(255,255,255,0.08); }
 
         .filter-row {
             background: var(--white);
@@ -264,8 +281,7 @@ function selected_attr(string $actual, string $expected): string
             margin-bottom: 6px;
         }
 
-        select,
-        .field {
+        select, .field {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -335,10 +351,7 @@ function selected_attr(string $actual, string $expected): string
             flex: 1;
         }
 
-        .card-body h3 {
-            font-size: 1.18rem;
-            margin: 0;
-        }
+        .card-body h3 { font-size: 1.18rem; margin: 0; }
 
         .card-meta {
             display: flex;
@@ -358,15 +371,8 @@ function selected_attr(string $actual, string $expected): string
             background: #F8FAFC;
         }
 
-        .widget {
-            padding: 24px;
-            margin-bottom: 22px;
-        }
-
-        .widget h3 {
-            font-size: 1rem;
-            margin: 0 0 14px;
-        }
+        .widget { padding: 24px; margin-bottom: 22px; }
+        .widget h3 { font-size: 1rem; margin: 0 0 14px; }
 
         .track-item,
         .doc-item,
@@ -379,9 +385,7 @@ function selected_attr(string $actual, string $expected): string
 
         .track-item:last-child,
         .doc-item:last-child,
-        .mentor-item:last-child {
-            border-bottom: none;
-        }
+        .mentor-item:last-child { border-bottom: none; }
 
         .icon-box {
             width: 36px;
@@ -393,10 +397,7 @@ function selected_attr(string $actual, string $expected): string
             flex: 0 0 auto;
         }
 
-        .muted {
-            color: var(--text-gray);
-            font-size: 0.78rem;
-        }
+        .muted { color: var(--text-gray); font-size: 0.78rem; }
 
         .status {
             font-size: 0.68rem;
@@ -406,7 +407,7 @@ function selected_attr(string $actual, string $expected): string
 
         .status.success { color: var(--success); }
         .status.warning { color: var(--warning); }
-        .status.danger { color: var(--danger); }
+        .status.danger  { color: var(--danger); }
 
         .tracker-form {
             display: flex;
@@ -414,9 +415,7 @@ function selected_attr(string $actual, string $expected): string
             margin-top: 10px;
         }
 
-        .tracker-form select {
-            min-width: 0;
-        }
+        .tracker-form select { min-width: 0; }
 
         .small-button {
             border: 1px solid var(--border-color);
@@ -437,10 +436,7 @@ function selected_attr(string $actual, string $expected): string
             font-style: italic;
         }
 
-        .result-panel {
-            padding: 24px;
-            margin-bottom: 28px;
-        }
+        .result-panel { padding: 24px; margin-bottom: 28px; }
 
         .result-header {
             display: flex;
@@ -471,10 +467,7 @@ function selected_attr(string $actual, string $expected): string
             background: white;
         }
 
-        .criteria-list {
-            display: grid;
-            gap: 10px;
-        }
+        .criteria-list { display: grid; gap: 10px; }
 
         .criterion {
             border: 1px solid var(--border-color);
@@ -506,11 +499,10 @@ function selected_attr(string $actual, string $expected): string
             color: var(--text-gray);
         }
 
+        /* ── Responsive ── */
         @media (max-width: 1100px) {
             .app-container,
-            .content-layout {
-                grid-template-columns: 1fr;
-            }
+            .content-layout { grid-template-columns: 1fr; }
 
             .portal-sidebar {
                 border-right: none;
@@ -527,9 +519,7 @@ function selected_attr(string $actual, string $expected): string
         }
 
         @media (max-width: 760px) {
-            main {
-                padding: 22px;
-            }
+            main { padding: 22px; }
 
             .portal-header {
                 align-items: stretch;
@@ -543,30 +533,13 @@ function selected_attr(string $actual, string $expected): string
 
             .filter-row,
             .scholarship-grid,
-            .details-grid {
-                grid-template-columns: 1fr;
-            }
+            .details-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-  <nav class="top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#F1F5F9]">
-    <div class="px-8 h-[60px] flex items-center justify-between gap-4">
-      <span class="font-newsreader font-bold text-3xl text-[#0F172A] whitespace-nowrap">
-        The Editorial Scholar
-      </span>
-      <div class="hidden md:flex items-center gap-8">
-        <a href="index.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] pb-1">Programs</a>
-        <a href="scholarship.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#A16207] hover:text-[#0F172A] transition-colors border-b-2 border-[#A16207]">Scholarships</a>
-        <a href="testPrep.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Test Prep</a>
-        <a href="visa.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Visa Guide</a>
-        <a href="research.php" class="font-newsreader font-semibold text-base tracking-[-0.4px] text-[#475569] hover:text-[#0F172A] transition-colors">Research</a>
-      </div>
-      <a href="index.html" class="font-newsreader font-semibold text-sm tracking-[0.35px] text-[#031632]">
-        Back To Explore
-      </a>
-    </div>
-  </nav>
+
+  <?php include __DIR__ . '/includes/nav_helper.php'; ?>
 
 <div class="app-container">
     <aside class="portal-sidebar">
@@ -579,11 +552,11 @@ function selected_attr(string $actual, string $expected): string
         </div>
 
         <nav>
-            <a href="index.html" class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
-            <a href="#search-portal" class="nav-item active"><i data-lucide="search"></i> Search Portal</a>
-            <a href="#document-vault" class="nav-item"><i data-lucide="archive"></i> Document Vault</a>
-            <a href="#deadlines" class="nav-item"><i data-lucide="calendar"></i> Deadlines</a>
-            <a href="#mentorship" class="nav-item"><i data-lucide="users"></i> Mentorship</a>
+            <a href="<?= $base ?>/index.php"     class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
+            <a href="#search-portal"             class="nav-item active"><i data-lucide="search"></i> Search Portal</a>
+            <a href="#document-vault"            class="nav-item"><i data-lucide="archive"></i> Document Vault</a>
+            <a href="#deadlines"                 class="nav-item"><i data-lucide="calendar"></i> Deadlines</a>
+            <a href="#mentorship"                class="nav-item"><i data-lucide="users"></i> Mentorship</a>
         </nav>
     </aside>
 
@@ -596,10 +569,10 @@ function selected_attr(string $actual, string $expected): string
             <form class="search-bar" method="get" action="/scholarship.php">
                 <i data-lucide="search" style="width: 16px; margin-right: 10px; color: #94a3b8;"></i>
                 <input type="text" name="search" value="<?= scholarship_escape($vm['filters']['search']) ?>" placeholder="Search funding...">
-                <input type="hidden" name="region" value="<?= scholarship_escape($vm['filters']['region']) ?>">
-                <input type="hidden" name="field" value="<?= scholarship_escape($vm['filters']['field']) ?>">
+                <input type="hidden" name="region"       value="<?= scholarship_escape($vm['filters']['region']) ?>">
+                <input type="hidden" name="field"        value="<?= scholarship_escape($vm['filters']['field']) ?>">
                 <input type="hidden" name="funding_type" value="<?= scholarship_escape($vm['filters']['funding_type']) ?>">
-                <input type="hidden" name="deadline" value="<?= scholarship_escape($vm['filters']['deadline']) ?>">
+                <input type="hidden" name="deadline"     value="<?= scholarship_escape($vm['filters']['deadline']) ?>">
             </form>
         </header>
 
@@ -607,6 +580,7 @@ function selected_attr(string $actual, string $expected): string
             <div class="flash <?= scholarship_escape($vm['flash']['type']) ?>"><?= scholarship_escape($vm['flash']['message']) ?></div>
         <?php endif; ?>
 
+        <!-- Hero -->
         <section class="hero-banner" style="--hero-image: url('<?= scholarship_escape($vm['featured']['image']) ?>');">
             <div class="hero-content">
                 <span style="font-size: 0.72rem; letter-spacing: 1px; color: #EAB308; font-weight: 800;">FEATURED SELECTION 2026</span>
@@ -614,8 +588,8 @@ function selected_attr(string $actual, string $expected): string
                 <p><?= scholarship_escape($vm['featured']['description']) ?></p>
                 <div class="hero-actions">
                     <form method="post" action="/scholarship.php">
-                        <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                        <input type="hidden" name="action" value="check_eligibility">
+                        <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                        <input type="hidden" name="action"        value="check_eligibility">
                         <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($vm['featured']['id']) ?>">
                         <button class="btn-primary" type="submit"><i data-lucide="sparkles"></i> Check Eligibility</button>
                     </form>
@@ -624,6 +598,7 @@ function selected_attr(string $actual, string $expected): string
             </div>
         </section>
 
+        <!-- Filters -->
         <form class="filter-row" method="get" action="/scholarship.php">
             <div>
                 <label for="region">Region</label>
@@ -667,12 +642,15 @@ function selected_attr(string $actual, string $expected): string
             </div>
         </form>
 
+        <!-- Eligibility result panel -->
         <?php if ($vm['selected_eligibility'] !== null): ?>
             <?php $eligibility = $vm['selected_eligibility']; ?>
             <section class="result-panel" id="eligibility-result">
                 <div class="result-header">
                     <div>
-                        <span class="status <?= $eligibility['eligible'] ? 'success' : 'warning' ?>"><?= $eligibility['eligible'] ? 'Strong profile match' : 'Needs preparation' ?></span>
+                        <span class="status <?= $eligibility['eligible'] ? 'success' : 'warning' ?>">
+                            <?= $eligibility['eligible'] ? 'Strong profile match' : 'Needs preparation' ?>
+                        </span>
                         <h2 class="section-title" style="margin-top: 6px;"><?= scholarship_escape($eligibility['scholarship']['title']) ?> Eligibility</h2>
                         <p class="muted"><?= scholarship_escape($eligibility['recommendation']) ?></p>
                     </div>
@@ -689,8 +667,8 @@ function selected_attr(string $actual, string $expected): string
                 <div class="card-actions" style="margin-top: 18px;">
                     <?php if (!scholarship_is_tracked($eligibility['scholarship']['id'])): ?>
                         <form method="post" action="/scholarship.php">
-                            <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                            <input type="hidden" name="action" value="track">
+                            <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                            <input type="hidden" name="action"        value="track">
                             <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($eligibility['scholarship']['id']) ?>">
                             <button class="btn-primary" type="submit"><i data-lucide="bookmark-plus"></i> Add to Tracker</button>
                         </form>
@@ -700,6 +678,7 @@ function selected_attr(string $actual, string $expected): string
             </section>
         <?php endif; ?>
 
+        <!-- Grant details panel -->
         <?php if ($vm['details'] !== null): ?>
             <?php $details = $vm['details']; ?>
             <section class="result-panel" id="grant-details">
@@ -722,6 +701,7 @@ function selected_attr(string $actual, string $expected): string
             </section>
         <?php endif; ?>
 
+        <!-- Main grid -->
         <div class="content-layout">
             <section>
                 <h2 class="section-title">Open Applications</h2>
@@ -747,23 +727,23 @@ function selected_attr(string $actual, string $expected): string
                                     </div>
                                     <div class="card-actions" style="margin-top: auto;">
                                         <form method="post" action="/scholarship.php">
-                                            <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                                            <input type="hidden" name="action" value="check_eligibility">
+                                            <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                                            <input type="hidden" name="action"        value="check_eligibility">
                                             <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($scholarship['id']) ?>">
                                             <button class="btn-secondary" type="submit"><i data-lucide="badge-check"></i> Check Eligibility</button>
                                         </form>
 
                                         <?php if ($isTracked): ?>
                                             <form method="post" action="/scholarship.php">
-                                                <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                                                <input type="hidden" name="action" value="untrack">
+                                                <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                                                <input type="hidden" name="action"        value="untrack">
                                                 <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($scholarship['id']) ?>">
                                                 <button class="btn-secondary" type="submit"><i data-lucide="bookmark-check"></i> Tracked</button>
                                             </form>
                                         <?php else: ?>
                                             <form method="post" action="/scholarship.php">
-                                                <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                                                <input type="hidden" name="action" value="track">
+                                                <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                                                <input type="hidden" name="action"        value="track">
                                                 <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($scholarship['id']) ?>">
                                                 <button class="btn-primary" type="submit"><i data-lucide="bookmark-plus"></i> Track</button>
                                             </form>
@@ -795,8 +775,8 @@ function selected_attr(string $actual, string $expected): string
                                 </div>
                                 <div class="muted">Deadline: <?= scholarship_escape($scholarship['deadline_label']) ?></div>
                                 <form class="tracker-form" method="post" action="/scholarship.php">
-                                    <input type="hidden" name="_token" value="<?= scholarship_escape($vm['token']) ?>">
-                                    <input type="hidden" name="action" value="status">
+                                    <input type="hidden" name="_token"        value="<?= scholarship_escape($vm['token']) ?>">
+                                    <input type="hidden" name="action"        value="status">
                                     <input type="hidden" name="scholarship_id" value="<?= scholarship_escape($scholarship['id']) ?>">
                                     <select name="status" aria-label="Tracker status">
                                         <?php foreach (['watching', 'preparing', 'submitted', 'archived'] as $status): ?>
@@ -858,41 +838,48 @@ function selected_attr(string $actual, string $expected): string
     </main>
 </div>
 
+<!-- ══════════ FOOTER (matches index.php) ══════════ -->
 <footer class="w-full bg-[#F8FAFC] border-t border-[#E2E8F0] py-12">
     <div class="max-w-[1280px] mx-auto px-8">
-      <div class="grid grid-cols-4 gap-8">
-        <div class="flex flex-col gap-4">
-          <p class="font-newsreader font-bold text-lg text-[#0F172A]">The Editorial Scholar</p>
-          <p class="font-manrope font-normal text-sm leading-5 tracking-[0.35px] text-[#64748B]">
-            &copy; 2026 The Editorial Scholar.<br/>Curating Global Futures.
-          </p>
+        <div class="grid grid-cols-4 gap-8">
+
+            <!-- Brand -->
+            <div class="flex flex-col gap-4">
+                <p class="font-newsreader font-bold text-lg text-[#0F172A]">The Editorial Scholar</p>
+                <p class="font-manrope font-normal text-sm leading-5 tracking-[0.35px] text-[#64748B]">
+                    &copy; <?= date('Y') ?> The Editorial Scholar.<br>Curating Global Futures.
+                </p>
+            </div>
+
+            <!-- Company -->
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Company</p>
+                <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">About Us</a>
+                <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Contact Support</a>
+            </div>
+
+            <!-- Legal -->
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
+                <a href="<?= $base ?>/terms.html"   class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Terms of Service</a>
+                <a href="<?= $base ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Privacy Policy</a>
+                <a href="#"                          class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Academic Integrity</a>
+            </div>
+
+            <!-- Social -->
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Social</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-twitter-x-line text-xl"></i></a>
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-linkedin-line text-xl"></i></a>
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-instagram-line text-xl"></i></a>
+                </div>
+            </div>
+
         </div>
-        <div class="flex flex-col gap-3">
-          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Company</p>
-          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">About Us</a>
-          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Contact Support</a>
-        </div>
-        <div class="flex flex-col gap-3">
-          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
-          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
-          <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
-        </div>
-        <div class="flex flex-col gap-3">
-          <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Social</p>
-          <div class="flex items-center gap-4 mt-1">
-            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i data-lucide="twitter"></i></a>
-            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i data-lucide="linkedin"></i></a>
-            <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i data-lucide="instagram"></i></a>
-          </div>
-        </div>
-      </div>
     </div>
 </footer>
 
-<script>
-    lucide.createIcons();
-</script>
+<script>lucide.createIcons();</script>
 </body>
 </html>
-
