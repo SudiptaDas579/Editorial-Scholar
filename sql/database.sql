@@ -183,210 +183,192 @@ CREATE TABLE IF NOT EXISTS test_prep_consultations (
 
 
 -- =====================================================
--- VISA APPLICATIONS
+--  VISA MODULE — Full Schema
+--  Drop order respects FK dependencies
+-- =====================================================
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS visa_audit_requests;
+DROP TABLE IF EXISTS visa_status_history;
+DROP TABLE IF EXISTS visa_documents;
+DROP TABLE IF EXISTS visa_faq;
+DROP TABLE IF EXISTS visa_applications;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- =====================================================
+--  1. VISA APPLICATIONS
 -- =====================================================
 
 CREATE TABLE visa_applications (
-id INT AUTO_INCREMENT PRIMARY KEY,
+    id                  INT UNSIGNED        NOT NULL AUTO_INCREMENT,
+    application_code    VARCHAR(30)         NOT NULL,
+    user_id             INT UNSIGNED        NULL,
 
-```
-application_code VARCHAR(30) UNIQUE NOT NULL,
+    full_name           VARCHAR(150)        NOT NULL,
+    email               VARCHAR(255)        NOT NULL,
+    phone               VARCHAR(50)         NOT NULL,
 
-user_id INT UNSIGNED NULL,
+    dob                 DATE                NULL,
+    gender              ENUM('Male','Female','Other') NULL,
 
-full_name VARCHAR(150) NOT NULL,
-email VARCHAR(255) NOT NULL,
-phone VARCHAR(50) NOT NULL,
+    nationality         VARCHAR(100)        NOT NULL,
+    passport_number     VARCHAR(100)        NOT NULL,
+    passport_expiry     DATE                NOT NULL,
 
-dob DATE,
-gender ENUM('Male','Female','Other'),
+    degree              VARCHAR(150)        NULL,
+    institution         VARCHAR(255)        NULL,
+    cgpa                VARCHAR(20)         NULL,
+    passing_year        YEAR                NULL,
 
-nationality VARCHAR(100) NOT NULL,
+    destination_country VARCHAR(100)        NOT NULL,
+    university_name     VARCHAR(255)        NOT NULL,
+    course_name         VARCHAR(255)        NOT NULL,
+    intake              VARCHAR(100)        NOT NULL,
 
-passport_number VARCHAR(100) NOT NULL,
-passport_expiry DATE NOT NULL,
+    sponsor_name        VARCHAR(150)        NULL,
+    sponsor_relation    VARCHAR(100)        NULL,
+    bank_balance        DECIMAL(15,2)       NOT NULL DEFAULT 0.00,
+    ielts_score         DECIMAL(4,2)        NOT NULL DEFAULT 0.00,
 
-degree VARCHAR(150),
-institution VARCHAR(255),
-cgpa VARCHAR(20),
-passing_year YEAR,
+    visa_status         ENUM(
+                            'submitted',
+                            'documents_pending',
+                            'under_review',
+                            'interview',
+                            'processing',
+                            'approved',
+                            'rejected'
+                        )                   NOT NULL DEFAULT 'submitted',
 
-destination_country VARCHAR(100) NOT NULL,
-university_name VARCHAR(255) NOT NULL,
-course_name VARCHAR(255) NOT NULL,
-intake VARCHAR(100) NOT NULL,
+    admin_notes         TEXT                NULL,
 
-sponsor_name VARCHAR(150),
-sponsor_relation VARCHAR(100),
+    created_at          TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                                ON UPDATE CURRENT_TIMESTAMP,
 
-bank_balance DECIMAL(15,2) DEFAULT 0,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_application_code (application_code),
+    INDEX idx_email      (email),
+    INDEX idx_status     (visa_status),
+    INDEX idx_user       (user_id),
 
-ielts_score DECIMAL(4,2) DEFAULT 0,
-
-visa_status ENUM(
-    'submitted',
-    'documents_pending',
-    'under_review',
-    'interview',
-    'processing',
-    'approved',
-    'rejected'
-) DEFAULT 'submitted',
-
-admin_notes TEXT,
-
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ON UPDATE CURRENT_TIMESTAMP,
-
-CONSTRAINT fk_visa_user
-FOREIGN KEY(user_id)
-REFERENCES users(id)
-ON DELETE SET NULL
-```
-
-);
+    CONSTRAINT fk_visa_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- DOCUMENTS
+--  2. VISA DOCUMENTS
 -- =====================================================
 
 CREATE TABLE visa_documents (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    application_id  INT UNSIGNED    NOT NULL,
 
-```
-id INT AUTO_INCREMENT PRIMARY KEY,
+    document_type   ENUM(
+                        'passport',
+                        'photo',
+                        'transcript',
+                        'certificate',
+                        'bank_statement',
+                        'offer_letter',
+                        'sop',
+                        'ielts'
+                    )               NOT NULL,
 
-application_id INT NOT NULL,
+    original_name   VARCHAR(255)    NOT NULL,
+    stored_name     VARCHAR(255)    NOT NULL,
+    file_path       VARCHAR(500)    NOT NULL,
 
-document_type ENUM(
-    'passport',
-    'photo',
-    'transcript',
-    'certificate',
-    'bank_statement',
-    'offer_letter',
-    'sop',
-    'ielts'
-) NOT NULL,
+    uploaded_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-original_name VARCHAR(255) NOT NULL,
-stored_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id),
+    INDEX idx_doc_application (application_id),
 
-file_path VARCHAR(500) NOT NULL,
-
-uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-FOREIGN KEY(application_id)
-REFERENCES visa_applications(id)
-ON DELETE CASCADE
-```
-
-);
+    CONSTRAINT fk_doc_application
+        FOREIGN KEY (application_id)
+        REFERENCES visa_applications(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- STATUS HISTORY
+--  3. VISA STATUS HISTORY
 -- =====================================================
 
 CREATE TABLE visa_status_history (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    application_id  INT UNSIGNED    NOT NULL,
+    status_name     VARCHAR(100)    NOT NULL,
+    remarks         TEXT            NULL,
+    changed_by      INT UNSIGNED    NULL,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-```
-id INT AUTO_INCREMENT PRIMARY KEY,
+    PRIMARY KEY (id),
+    INDEX idx_hist_application (application_id),
 
-application_id INT NOT NULL,
+    CONSTRAINT fk_hist_application
+        FOREIGN KEY (application_id)
+        REFERENCES visa_applications(id)
+        ON DELETE CASCADE,
 
-status_name VARCHAR(100) NOT NULL,
-
-remarks TEXT,
-
-changed_by INT UNSIGNED NULL,
-
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-FOREIGN KEY(application_id)
-REFERENCES visa_applications(id)
-ON DELETE CASCADE,
-
-FOREIGN KEY(changed_by)
-REFERENCES users(id)
-ON DELETE SET NULL
-```
-
-);
+    CONSTRAINT fk_hist_changed_by
+        FOREIGN KEY (changed_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- AUDIT REQUESTS
+--  4. VISA AUDIT REQUESTS
 -- =====================================================
 
 CREATE TABLE visa_audit_requests (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    application_id  INT UNSIGNED    NOT NULL,
 
-```
-id INT AUTO_INCREMENT PRIMARY KEY,
+    issue_type      VARCHAR(150)    NOT NULL,
+    description     TEXT            NOT NULL,
 
-application_id INT NOT NULL,
+    priority        ENUM('low','medium','high')              NOT NULL DEFAULT 'medium',
+    status          ENUM('open','reviewing','resolved','closed') NOT NULL DEFAULT 'open',
 
-issue_type VARCHAR(150) NOT NULL,
+    admin_reply     TEXT            NULL,
 
-description TEXT NOT NULL,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-priority ENUM(
-    'low',
-    'medium',
-    'high'
-) DEFAULT 'medium',
+    PRIMARY KEY (id),
+    INDEX idx_audit_application (application_id),
+    INDEX idx_audit_status      (status),
 
-status ENUM(
-    'open',
-    'reviewing',
-    'resolved',
-    'closed'
-) DEFAULT 'open',
-
-admin_reply TEXT,
-
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-FOREIGN KEY(application_id)
-REFERENCES visa_applications(id)
-ON DELETE CASCADE
-```
-
-);
+    CONSTRAINT fk_audit_application
+        FOREIGN KEY (application_id)
+        REFERENCES visa_applications(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- FAQ
+--  5. VISA FAQ
 -- =====================================================
 
 CREATE TABLE visa_faq (
+    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    question        VARCHAR(500)    NOT NULL,
+    answer          TEXT            NOT NULL,
+    display_order   INT             NOT NULL DEFAULT 0,
+    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-```
-id INT AUTO_INCREMENT PRIMARY KEY,
+    PRIMARY KEY (id),sa
+    INDEX idx_faq_order (display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-question VARCHAR(500) NOT NULL,
+-- =====================================================
+--  DEFAULT FAQ ROWS
+-- =====================================================
 
-answer TEXT NOT NULL,
-
-display_order INT DEFAULT 0,
-
-created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-```
-
-);
-
-INSERT INTO visa_faq(question,answer,display_order)
-VALUES
-
-('How long does visa processing take?',
-'Usually between 2 and 12 weeks depending on destination country.',
-1),
-
-('Can I upload documents later?',
-'Yes, documents can be uploaded after application submission.',
-2),
-
-('Can I track my application?',
-'Yes, every application receives a unique tracking code.',
-3),
-
-('Can I request document audit?',
-'Yes, audit requests can be submitted from the visa portal.',
-4);
+INSERT INTO visa_faq (question, answer, display_order) VALUES
+('How long does visa processing take?',   'Usually between 2 and 12 weeks depending on the destination country.',    1),
+('Can I upload documents later?',         'Yes, documents can be uploaded after your application has been submitted.', 2),
+('Can I track my application?',           'Yes, every application receives a unique tracking code upon submission.',   3),
+('Can I request a document audit?',       'Yes, audit requests can be submitted directly from the visa portal.',       4);
