@@ -3,9 +3,27 @@
 
 session_start();
 
+require_once __DIR__ . '/config/app.php';
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/includes/auth_helpers.php';
 
 $pdo = getDB();
+
+// ── Nav variables ─────────────────────────────────────────────────────────────
+$base         = BASE_URL;
+$activeNav    = 'visa';
+$isLoggedIn   = is_logged_in();
+$role         = $_SESSION['role']      ?? '';
+$userName     = $_SESSION['full_name'] ?? '';
+$parts        = array_filter(explode(' ', trim($userName)));
+if (count($parts) >= 2) {
+    $userInitials = strtoupper(substr($parts[0], 0, 1) . substr(end($parts), 0, 1));
+} elseif (count($parts) === 1) {
+    $userInitials = strtoupper(substr($parts[0], 0, 2));
+} else {
+    $userInitials = '?';
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 $success = '';
 $error   = '';
@@ -176,7 +194,6 @@ if (isset($_POST['submit_audit'])) {
     try {
         $auditCode = clean($_POST['audit_application_code'] ?? '');
 
-        // Resolve application code → ID
         $appStmt = $pdo->prepare("
             SELECT id FROM visa_applications WHERE application_code = ?
         ");
@@ -242,21 +259,32 @@ if ($isAdmin) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editorial Scholar Visa Portal</title>
+    <title>Visa Portal — The Editorial Scholar</title>
+
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="<?= $base ?>/src/output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Page-specific styles (unchanged) -->
     <link rel="stylesheet" href="visa.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Push page content below fixed nav */
+        body { padding-top: 60px; }
+
+        /* Nav dropdown animation */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeInDown 0.15s ease; }
+    </style>
 </head>
 <body>
 
-<!-- ══ NAVBAR ══════════════════════════════════════════════ -->
-<header class="navbar">
-    <div class="logo">Editorial Scholar</div>
-    <nav>
-        <a href="#apply">Apply</a>
-        <a href="#tracker">Track</a>
-        <a href="#faq">FAQ</a>
-    </nav>
-</header>
+<?php include __DIR__ . '/includes/nav_helper.php'; ?>
 
 <!-- ══ HERO ════════════════════════════════════════════════ -->
 <section class="hero">
@@ -401,7 +429,6 @@ if ($isAdmin) {
 <div class="admin-wrapper">
     <h1>Visa Admin Panel</h1>
 
-    <!-- Applications table -->
     <div class="admin-card">
         <h2>Applications</h2>
         <table>
@@ -442,7 +469,6 @@ if ($isAdmin) {
         </table>
     </div>
 
-    <!-- Audit requests -->
     <div class="admin-card">
         <h2>Audit Requests</h2>
         <?php foreach ($audits as $audit): ?>
@@ -454,7 +480,6 @@ if ($isAdmin) {
         <?php endforeach; ?>
     </div>
 
-    <!-- Add FAQ -->
     <div class="admin-card">
         <h2>Add FAQ</h2>
         <form method="POST" action="?admin=1" class="audit-section">
@@ -466,9 +491,42 @@ if ($isAdmin) {
 </div>
 <?php endif; ?>
 
-<!-- ══ FOOTER ═══════════════════════════════════════════════ -->
-<footer>
-    <p>&copy; 2026 Editorial Scholar</p>
+<!-- ══ FOOTER (matches site-wide) ══════════════════════════ -->
+<footer class="w-full bg-[#F8FAFC] border-t border-[#E2E8F0] py-12">
+    <div class="max-w-[1280px] mx-auto px-8">
+        <div class="grid grid-cols-4 gap-8">
+
+            <div class="flex flex-col gap-4">
+                <p class="font-newsreader font-bold text-lg text-[#0F172A]">The Editorial Scholar</p>
+                <p class="font-manrope font-normal text-sm leading-5 tracking-[0.35px] text-[#64748B]">
+                    &copy; <?= date('Y') ?> The Editorial Scholar.<br>Curating Global Futures.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Company</p>
+                <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">About Us</a>
+                <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Contact Support</a>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
+                <a href="<?= $base ?>/terms.php"   class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Terms of Service</a>
+                <a href="<?= $base ?>/privacy.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Privacy Policy</a>
+                <a href="#"                          class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Academic Integrity</a>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Social</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-twitter-x-line text-xl"></i></a>
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-linkedin-line text-xl"></i></a>
+                    <a href="#" class="text-[#64748B] hover:text-[#0F172A] transition-colors"><i class="ri-instagram-line text-xl"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </footer>
 
 <script>

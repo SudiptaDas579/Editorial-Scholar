@@ -1,8 +1,8 @@
 <?php
 /**
- * index.php — Programs page (replaces index.html)
+ * index.php — Programs page (replaces index.php)
  *
- * What this adds vs the old index.html:
+ * What this adds vs the old index.php:
  *  - Session bootstrap (reads who is logged in)
  *  - Avatar + logout dropdown in navbar for logged-in users
  *  - "Get Started" / "Sign In" for guests
@@ -208,7 +208,7 @@ try {
             </div>
           </div>
 
-          <a href="<?= $base ?>/testPrep.html"
+          <a href="<?= $base ?>/testPrep.php"
              class="relative z-10 inline-flex items-center gap-2 border-b-gold pb-1 w-fit hover:opacity-70 transition-opacity font-manrope font-bold text-base text-[#031632]">
             Explore Test Prep
             <i class="ri-arrow-right-s-line text-base text-[#031632]"></i>
@@ -248,7 +248,7 @@ try {
             <p class="font-manrope font-normal text-[18px] leading-[26px] text-[#0f2932]">
               Expert navigation through student visa requirements for UK, USA, Canada, and the EU.
             </p>
-            <a href="<?= $base ?>/visa.html"
+            <a href="<?= $base ?>/visa.php"
                class="inline-flex items-center gap-2 pt-2 w-fit hover:opacity-70 transition-opacity font-manrope font-bold text-base text-[#0f2932]">
               Read Visa Guides
               <i class="ri-arrow-right-line text-base text-[#0f2932]"></i>
@@ -413,8 +413,8 @@ try {
         <!-- Legal -->
         <div class="flex flex-col gap-3">
           <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-          <a href="<?= $base ?>/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
-          <a href="<?= $base ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="<?= $base ?>/terms.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="<?= $base ?>/privacy.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
           <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
         </div>
 

@@ -51,16 +51,16 @@ $role       = $_SESSION['role'] ?? '';
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#F1F5F9] shadow-sm">
   <div class="px-8 h-[60px] flex items-center justify-between gap-4">
 
-    <a href="<?= BASE_URL ?>/index.html" class="font-newsreader font-bold text-2xl text-[#0F172A] whitespace-nowrap ml-5">
+    <a href="<?= BASE_URL ?>/index.php" class="font-newsreader font-bold text-2xl text-[#0F172A] whitespace-nowrap ml-5">
       The Editorial Scholar
     </a>
 
     <div class="hidden md:flex items-center gap-8">
-      <a href="<?= BASE_URL ?>/index.html"        class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='programs'    ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Programs</a>
+      <a href="<?= BASE_URL ?>/index.php"        class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='programs'    ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Programs</a>
       <a href="<?= BASE_URL ?>/scholarship.php"   class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='scholarships' ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Scholarships</a>
-      <a href="<?= BASE_URL ?>/testPrep.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='testprep'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Test Prep</a>
-      <a href="<?= BASE_URL ?>/visa.html"         class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='visa'         ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Visa Guide</a>
-      <a href="<?= BASE_URL ?>/research.html"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
+      <a href="<?= BASE_URL ?>/testPrep.php"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='testprep'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Test Prep</a>
+      <a href="<?= BASE_URL ?>/visa.php"         class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='visa'         ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Visa Guide</a>
+      <a href="<?= BASE_URL ?>/research.php"     class="font-newsreader font-semibold text-sm tracking-[-0.3px] <?= $activeNav==='research'     ? 'text-[#A16207] border-b-2 border-[#A16207] pb-1' : 'text-[#475569] hover:text-[#0F172A]' ?> transition-colors">Research</a>
     </div>
 
     <div class="flex items-center gap-4 mr-3">

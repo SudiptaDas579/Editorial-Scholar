@@ -435,8 +435,8 @@ $cssPath   = BASE_URL . '/src/output.css';
       <a href="#overview"     class="nav-item active"><i class="ri-home-4-line"></i> Overview</a>
       <a href="<?= BASE_URL ?>/scholarship.php" class="nav-item"><i class="ri-award-line"></i> Scholarships</a>
       <a href="<?= BASE_URL ?>/research.php"    class="nav-item"><i class="ri-flask-line"></i> Research Programs</a>
-      <a href="<?= BASE_URL ?>/visa.html"       class="nav-item"><i class="ri-global-line"></i> Visa Guide</a>
-      <a href="<?= BASE_URL ?>/testPrep.html"   class="nav-item"><i class="ri-pencil-ruler-2-line"></i> Test Prep</a>
+      <a href="<?= BASE_URL ?>/visa.php"       class="nav-item"><i class="ri-global-line"></i> Visa Guide</a>
+      <a href="<?= BASE_URL ?>/testPrep.php"   class="nav-item"><i class="ri-pencil-ruler-2-line"></i> Test Prep</a>
     </nav>
 
     <hr class="nav-divider" />
@@ -449,7 +449,7 @@ $cssPath   = BASE_URL . '/src/output.css';
     <hr class="nav-divider" />
 
     <nav>
-      <a href="<?= BASE_URL ?>/index.html"      class="nav-item"><i class="ri-arrow-left-line"></i> Back to Site</a>
+      <a href="<?= BASE_URL ?>/index.php"      class="nav-item"><i class="ri-arrow-left-line"></i> Back to Site</a>
       <a href="<?= BASE_URL ?>/auth/logout.php" class="nav-item" style="color:#DC2626;"><i class="ri-logout-box-line"></i> Sign Out</a>
     </nav>
   </aside>
@@ -620,8 +620,8 @@ $cssPath   = BASE_URL . '/src/output.css';
           <div class="card-body" style="display:flex;flex-direction:column;gap:8px;padding:16px;">
             <a href="<?= BASE_URL ?>/scholarship.php"  class="btn-gold-sm" style="text-align:center;"><i class="ri-award-line"></i> Browse Scholarships</a>
             <a href="<?= BASE_URL ?>/research.php"     class="btn-outline-sm" style="text-align:center;"><i class="ri-flask-line"></i> Research Programs</a>
-            <a href="<?= BASE_URL ?>/visa.html"        class="btn-outline-sm" style="text-align:center;"><i class="ri-global-line"></i> Visa Checklist</a>
-            <a href="<?= BASE_URL ?>/testPrep.html"    class="btn-outline-sm" style="text-align:center;"><i class="ri-pencil-ruler-2-line"></i> Test Preparation</a>
+            <a href="<?= BASE_URL ?>/visa.php"        class="btn-outline-sm" style="text-align:center;"><i class="ri-global-line"></i> Visa Checklist</a>
+            <a href="<?= BASE_URL ?>/testPrep.php"    class="btn-outline-sm" style="text-align:center;"><i class="ri-pencil-ruler-2-line"></i> Test Preparation</a>
           </div>
         </div>
 

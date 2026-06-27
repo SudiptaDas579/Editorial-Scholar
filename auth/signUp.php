@@ -217,9 +217,9 @@ $cssPath   = BASE_URL . '/src/output.css';
               <input type="checkbox" name="terms" required class="accent-[#775A19] mt-0.5 flex-shrink-0" />
               <span class="font-manrope text-sm text-[#44474D]">
                 I agree to the
-                <a href="<?= BASE_URL ?>/terms.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Terms of Service</a>
+                <a href="<?= BASE_URL ?>/terms.php" class="text-[#775A19] hover:text-[#A16207] hover:underline">Terms of Service</a>
                 and
-                <a href="<?= BASE_URL ?>/privacy.html" class="text-[#775A19] hover:text-[#A16207] hover:underline">Privacy Policy</a>
+                <a href="<?= BASE_URL ?>/privacy.php" class="text-[#775A19] hover:text-[#A16207] hover:underline">Privacy Policy</a>
               </span>
             </label>
 
@@ -297,8 +297,8 @@ $cssPath   = BASE_URL . '/src/output.css';
 
         <div class="flex flex-col gap-3">
           <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-          <a href="<?= BASE_URL ?>/terms.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
-          <a href="<?= BASE_URL ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
+          <a href="<?= BASE_URL ?>/terms.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Terms of Service</a>
+          <a href="<?= BASE_URL ?>/privacy.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Privacy Policy</a>
           <a href="#" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors">Academic Integrity</a>
         </div>
 

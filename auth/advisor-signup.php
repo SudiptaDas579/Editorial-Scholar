@@ -289,9 +289,9 @@ $cssPath   = BASE_URL . '/src/output.css';
             <input type="checkbox" name="terms" required class="accent-[#775A19] mt-0.5 flex-shrink-0" />
             <span class="font-manrope text-sm text-[#374151]">
               I confirm that all information provided is accurate and I agree to the
-              <a href="<?= BASE_URL ?>/terms.html" class="text-[#A16207] hover:underline">Terms of Service</a>
+              <a href="<?= BASE_URL ?>/terms.php" class="text-[#A16207] hover:underline">Terms of Service</a>
               and
-              <a href="<?= BASE_URL ?>/advisor-code.html" class="text-[#A16207] hover:underline">Advisor Code of Conduct</a>
+              <a href="<?= BASE_URL ?>/advisor-code.php" class="text-[#A16207] hover:underline">Advisor Code of Conduct</a>
             </span>
           </label>
 
@@ -317,7 +317,7 @@ $cssPath   = BASE_URL . '/src/output.css';
     </div>
 
     <p class="text-center mt-6 font-manrope text-sm text-[#9CA3AF]">
-      <a href="<?= BASE_URL ?>/index.html" class="hover:text-[#374151] transition-colors">
+      <a href="<?= BASE_URL ?>/index.php" class="hover:text-[#374151] transition-colors">
         <i class="ri-arrow-left-line"></i> Back to home
       </a>
     </p>

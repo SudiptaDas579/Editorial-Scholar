@@ -334,7 +334,7 @@ $cssPath   = BASE_URL . '/src/output.css';
     <hr class="nav-divider">
 
     <nav>
-      <a href="<?= BASE_URL ?>/index.html"      class="nav-item"><i class="ri-arrow-left-line"></i> Back to Site</a>
+      <a href="<?= BASE_URL ?>/index.php"      class="nav-item"><i class="ri-arrow-left-line"></i> Back to Site</a>
       <a href="<?= BASE_URL ?>/auth/logout.php" class="nav-item" style="color:#DC2626;"><i class="ri-logout-box-line"></i> Sign Out</a>
     </nav>
   </aside>

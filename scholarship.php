@@ -861,8 +861,8 @@ function selected_attr(string $actual, string $expected): string
             <!-- Legal -->
             <div class="flex flex-col gap-3">
                 <p class="font-manrope font-bold text-sm tracking-[1.4px] uppercase text-[#0F172A] mb-2">Legal</p>
-                <a href="<?= $base ?>/terms.html"   class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Terms of Service</a>
-                <a href="<?= $base ?>/privacy.html" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Privacy Policy</a>
+                <a href="<?= $base ?>/terms.php"   class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Terms of Service</a>
+                <a href="<?= $base ?>/privacy.php" class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Privacy Policy</a>
                 <a href="#"                          class="font-manrope font-normal text-sm tracking-[0.35px] text-[#64748B] hover:text-[#0F172A] transition-colors no-underline">Academic Integrity</a>
             </div>
 

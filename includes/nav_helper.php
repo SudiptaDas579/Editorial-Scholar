@@ -69,8 +69,8 @@ function navClass(string $key, string $active): string {
     <div class="hidden md:flex items-center gap-8">
       <a href="<?= $base ?>/index.php"         class="<?= navClass('programs',    $activeNav) ?>">Programs</a>
       <a href="<?= $base ?>/scholarship.php"   class="<?= navClass('scholarships', $activeNav) ?>">Scholarships</a>
-      <a href="<?= $base ?>/testPrep.html"     class="<?= navClass('testprep',    $activeNav) ?>">Test Prep</a>
-      <a href="<?= $base ?>/visa.html"         class="<?= navClass('visa',        $activeNav) ?>">Visa Guide</a>
+      <a href="<?= $base ?>/testPrep.php"     class="<?= navClass('testprep',    $activeNav) ?>">Test Prep</a>
+      <a href="<?= $base ?>/visa.php"         class="<?= navClass('visa',        $activeNav) ?>">Visa Guide</a>
       <a href="<?= $base ?>/research.php"      class="<?= navClass('research',    $activeNav) ?>">Research</a>
     </div>
 

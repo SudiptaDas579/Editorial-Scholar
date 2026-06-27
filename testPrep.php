@@ -43,7 +43,7 @@ $exams = [
         'sections' => ['Verbal','Quantitative','Analytical Writing'],
         'modules'  => 10,
         'color'    => '#7C3AED',
-        'reg_url'  => 'https://www.ets.org/gre/test-takers/general-test/register.html',
+        'reg_url'  => 'https://www.ets.org/gre/test-takers/general-test/register.php',
     ],
     'toefl' => [
         'label'    => 'Academic Proficiency',
@@ -59,7 +59,7 @@ $exams = [
         'sections' => ['Reading','Listening','Speaking','Writing'],
         'modules'  => 9,
         'color'    => '#059669',
-        'reg_url'  => 'https://www.ets.org/toefl/test-takers/ibt/register.html',
+        'reg_url'  => 'https://www.ets.org/toefl/test-takers/ibt/register.php',
     ],
 ];
 
